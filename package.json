@@ -22,5 +22,15 @@
     "electron": "^1.6.1",
     "electron-packager": "^8.5.2",
     "electron-prebuilt": "^1.4.13"
+  },
+  "dependencies": {
+    "bcrypt-nodejs": "0.0.3",
+    "body-parser": "^1.17.0",
+    "cookie-parser": "^1.4.3",
+    "express": "^4.15.0",
+    "morgan": "^1.8.1",
+    "sequelize": "^3.30.2",
+    "sequelize-cli": "^2.5.1",
+    "sqlite3": "^3.1.8"
   }
 }
