@@ -4,6 +4,8 @@
   "description": "A tier 2 scheduling applicaitons for schools.",
   "main": "main.js",
   "scripts": {
+    "start": "electron .",
+    "build": "electron-packager . pickr --platform=darwin --arch=x64 --version=0.27.2",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -17,6 +19,8 @@
   },
   "homepage": "https://github.com/SebastianGuerreroCardenas/Pickr2.0#readme",
   "devDependencies": {
-    "electron-packager": "^8.5.2"
+    "electron": "^1.6.1",
+    "electron-packager": "^8.5.2",
+    "electron-prebuilt": "^1.4.13"
   }
 }
