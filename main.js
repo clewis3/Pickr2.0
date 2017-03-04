@@ -87,17 +87,17 @@ fs.readdirSync(__dirname + '/src/models').forEach(function(file) {
 
 
 //Load all the routes in the directory
-fs.readdirSync(__dirname + '/src/routes').forEach(function(file) {
-  if (path.extname(file) =='.js') {
-    require('./src/routes/' + file).init(localApp, passport);
-  }
-});
+// fs.readdirSync(__dirname + '/src/routes').forEach(function(file) {
+//   if (path.extname(file) =='.js') {
+//     require('./src/routes/' + file).init(localApp, passport);
+//   }
+// });
 
 // Catch any routes not already handed with an error message
 localApp.use(function(request, response) {
   var message = 'Error, did not understand path' + request.path;
   response.status(404).end(message);
-})
+});
 
 httpServer.listen(3000, function() {
   console.log('listening on port 3000')
