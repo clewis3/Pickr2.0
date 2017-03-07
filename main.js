@@ -78,13 +78,24 @@ var bodyParser = require("body-parser");
 
 localApp.use(morgan('tiny')); //prints useful info the terminal
 
+//set up database
+var Sequelize = require("sequelize");
+
+var connection = new Sequelize('db', 'username', 'password',{
+    dialect: 'sqlite',
+    storage: __dirname + '/db.sqlite'
+});
+
 //loads all models
 fs.readdirSync(__dirname + '/src/models').forEach(function(file) {
   if (path.extname(file) =='.js') {
-    require('./src/models/' + file);
+    require('./src/models/' + file).init(Sequelize, connection);
   }
 });
 
+connection.sync().catch(function(error){
+    console.log(error);
+});
 
 //Load all the routes in the directory
 // fs.readdirSync(__dirname + '/src/routes').forEach(function(file) {
