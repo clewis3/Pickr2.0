@@ -1,5 +1,6 @@
+
 const routes = [
-  require('./routes/routes')
+  require('./routes/student.js')
 ];
 
 module.exports = function router(localApp, db){

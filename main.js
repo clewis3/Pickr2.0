@@ -61,6 +61,7 @@ var morgan = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require("body-parser");
 var db = require('./src/config/db.js');
+var router = require('./src/router/index.js');
 // var session = require('express-session');
 // var flash = require('connect-flash');
 
@@ -78,7 +79,7 @@ var db = require('./src/config/db.js');
 // localApp.use(flash()); // use connect-flash for flash messages stored in session
 
 localApp.use(morgan('tiny')); //prints useful info the terminal
-
+router(localApp,db);
 
 
 
@@ -90,7 +91,7 @@ localApp.use(morgan('tiny')); //prints useful info the terminal
 // });
 
 // Catch any routes not already handed with an error message
-localApp.use(function(request, response) {
+localApp.use((request, response) => {
   var message = 'Error, did not understand path' + request.path;
   response.status(404).end(message);
 });
