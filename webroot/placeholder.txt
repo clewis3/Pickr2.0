@@ -1,1 +1,0 @@
-This directory will be where the angular app will be. Once files start being added, this will be deleted.

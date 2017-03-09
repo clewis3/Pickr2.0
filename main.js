@@ -81,7 +81,11 @@ var router = require('./src/router/index.js');
 localApp.use(morgan('tiny')); //prints useful info the terminal
 router(localApp,db);
 
+localApp.use(express.static(path.join(__dirname, 'webroot')));
 
+localApp.get('/', (req, res) =>{
+    res.sendfile('webroot/index.html');
+});
 
 // Catch any routes not already handed with an error message
 localApp.use((request, response) => {
