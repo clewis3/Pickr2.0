@@ -60,6 +60,8 @@ var fs = require("fs");
 var morgan = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require("body-parser");
+var db = require('./src/config/db.js');
+var router = require('./src/router/index.js');
 // var session = require('express-session');
 // var flash = require('connect-flash');
 
@@ -77,28 +79,18 @@ var bodyParser = require("body-parser");
 // localApp.use(flash()); // use connect-flash for flash messages stored in session
 
 localApp.use(morgan('tiny')); //prints useful info the terminal
-
-//loads all models
-fs.readdirSync(__dirname + '/src/models').forEach(function(file) {
-  if (path.extname(file) =='.js') {
-    require('./src/models/' + file);
-  }
-});
+router(localApp,db);
 
 
-//Load all the routes in the directory
-// fs.readdirSync(__dirname + '/src/routes').forEach(function(file) {
-//   if (path.extname(file) =='.js') {
-//     require('./src/routes/' + file).init(localApp, passport);
-//   }
-// });
 
 // Catch any routes not already handed with an error message
-localApp.use(function(request, response) {
+localApp.use((request, response) => {
   var message = 'Error, did not understand path' + request.path;
   response.status(404).end(message);
 });
 
-httpServer.listen(3000, function() {
-  console.log('listening on port 3000')
+db.connection.sync().then(() => {
+  httpServer.listen(3000, function() {
+    console.log('listening on port 3000');
+  });
 });
