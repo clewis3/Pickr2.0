@@ -3,7 +3,16 @@ module.exports = (localApp, db) => {
 	localApp.get('/api/students.json', (req, res) => {
 		//res.json({"student": "hello"})
 		db.student.findAll().then((students) => {
-			res.json(students);
+			
+			var responseJSON = students.map((student) => {
+				console.log(student);
+				return {
+					full_name: student.full_name,
+					grade_level: student.grade_level
+				}
+			});
+
+			res.json(responseJSON);
 		});
 	});
 
@@ -22,7 +31,6 @@ module.exports = (localApp, db) => {
 
 
 	localApp.post('/api/students/login.json', (req, res) => {
-		console.log(req);
 		res.json({"student": "admin", "password": "sadfsda", "admin":"true", "type": "admin"});
 	});
 
