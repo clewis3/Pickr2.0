@@ -61,6 +61,9 @@ var morgan = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require("body-parser");
 var db = require('./src/config/db.js');
+
+localApp.use(express.static(path.join(__dirname, 'webroot')));
+
 var router = require('./src/router/index.js');
 // var session = require('express-session');
 // var flash = require('connect-flash');
@@ -81,17 +84,17 @@ var router = require('./src/router/index.js');
 localApp.use(morgan('tiny')); //prints useful info the terminal
 router(localApp,db);
 
-localApp.use(express.static(path.join(__dirname, 'webroot')));
 
-localApp.get('/', (req, res) =>{
-    res.sendfile('webroot/index.html');
+
+localApp.get('*', (req, res) =>{
+  res.sendfile('webroot/index.html');
 });
 
 // Catch any routes not already handed with an error message
-localApp.use((request, response) => {
-  var message = 'Error, did not understand path' + request.path;
-  response.status(404).end(message);
-});
+// localApp.use((request, response) => {
+//   var message = 'Error, did not understand path' + request.path;
+//   response.status(404).end(message);
+// });
 
 db.connection.sync().then(() => {
   httpServer.listen(3000, function() {
