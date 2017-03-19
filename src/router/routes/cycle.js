@@ -1,1 +1,2 @@
-cycle.js
+module.exports = (localApp, db) => {
+}
