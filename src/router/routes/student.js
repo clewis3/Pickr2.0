@@ -1,3 +1,5 @@
+var fs = require("fs");
+
 module.exports = (localApp, db) => {
 
 	localApp.get('/api/students.json', (req, res) => {
@@ -5,7 +7,6 @@ module.exports = (localApp, db) => {
 		db.student.findAll().then((students) => {
 			
 			var responseJSON = students.map((student) => {
-				console.log(student);
 				return {
 					full_name: student.full_name,
 					grade_level: student.grade_level
@@ -32,6 +33,11 @@ module.exports = (localApp, db) => {
 
 	localApp.post('/api/students/login.json', (req, res) => {
 		res.json({"student": "admin", "password": "sadfsda", "admin":"true", "type": "admin"});
+	});
+
+	localApp.post('/api/students/import.json', (req, res) => {
+		
+		res.json({"test": "test"});
 	});
 
 }
