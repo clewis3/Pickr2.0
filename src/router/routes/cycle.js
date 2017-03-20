@@ -12,7 +12,7 @@ module.exports = (localApp, db) => {
 		
 	});
 
-	localApp.get('api/cycles.json', (req, res) =>{
+	localApp.get('/api/cycles.json', (req, res) =>{
 		db.cycle.findAll().then((cycles) => {
 			
 			var responseJSON = cycles.map((cycle) => {
