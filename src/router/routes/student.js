@@ -18,15 +18,24 @@ module.exports = (localApp, db) => {
 	});
 
 	//deletes a student, but dont know which one
-	localApp.delete('/api/students.json', (req, res) => {
-
+	localApp.delete('/api/students/:id', (req, res) => {
+		db.student.destroy({
+			where: {
+				student_id: req.params.id.slice(0,-5)
+			}
+		}).then((rowDeleted) => {
+			//it might be more than one, if it deletes all the associated tutorials it is in
+			if(rowDeleted >= 1) {
+				res.json({numOfRowsDeleted: rowDeleted}); //might want to change response
+			}
+		});
 	});
 
 	//clicking on student report this is the get
 	//list with [{id: first_name: last_name grade_level: tutorials:{id: name: cycle_id: room number: teacher name: max_students: _matchingData: {Cycles: {id: name: status : } }, "_joinData:{tutorial_id, id: student_id: locked:}}, fullname: }]
 	//Table has student name(first name alphabetical), gradelevel, tutorial name, instructor, room#
 
-	lcoalApp.get('/api/students/active.json', (req, res) => {
+	localApp.get('/api/students/active.json', (req, res) => {
 
 	});
 
