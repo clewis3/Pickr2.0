@@ -64,6 +64,8 @@ var db = require('./src/config/db.js');
 
 localApp.use(express.static(path.join(__dirname, 'webroot')));
 
+
+
 var router = require('./src/router/index.js');
 // var session = require('express-session');
 // var flash = require('connect-flash');
@@ -73,7 +75,8 @@ var router = require('./src/router/index.js');
 
 // localApp.use(cookieParser());
 // get information from html forms
-// localApp.use(bodyParser()); 
+localApp.use(bodyParser.json());
+localApp.use(bodyParser.urlencoded({ extended: true })); 
 
 // required for passport
 // localApp.use(session({ secret: 'asdfhasdlkjfhasdkfhasdlkfhsljh' })); // session secret

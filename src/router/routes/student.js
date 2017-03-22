@@ -1,4 +1,6 @@
 var fs = require("fs");
+var multer = require('multer');
+var upload = multer({dest: 'uploads/'})
 
 module.exports = (localApp, db) => {
 
@@ -46,12 +48,23 @@ module.exports = (localApp, db) => {
 
 	//login for everybody
 	localApp.post('/api/students/login.json', (req, res) => {
-		res.json({"student": "admin", "password": "sadfsda", "admin":"true", "type": "admin"});
+		const first_name = req.body.student.first_name;
+		const password = req.body.password;
+
+		if (first_name === "admin") {
+			//add logic to check password
+			res.json({"student": "admin", "password": "sadfsda", "admin":"true", "type": "admin"});
+		} else if (first_name === "teacher"){
+			//add logic to check password
+			res.json({"student": "teacher", "password": "sadfsda", "admin":"false", "type": "teacher"});		
+		} else {
+			//add logic to check password & return data
+		}
 	});
 
 	//importing list
-	localApp.post('/api/students/import.json', (req, res) => {
-		
+	localApp.post('/api/students/import.json', upload.single('file'),function(req, res) {
+		console.log(req.file.filename, req.body);
 		res.json({"test": "test"});
 	});
 
