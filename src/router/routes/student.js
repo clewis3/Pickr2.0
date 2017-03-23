@@ -93,6 +93,7 @@ module.exports = (localApp, db) => {
 			res.json({'status': error.message});
 		})
 		.on('end', function() {
+
 			if (testKeys(csvData[0]) ) {
 				//send error
 				console.log('heading error');
@@ -113,9 +114,9 @@ module.exports = (localApp, db) => {
 							student.grade_level = row.grade_level
 							student.save().then(() => {
 								console.log(row.last_name + ' grade was updated to ' + row.grade_level);
-							})
+							});
 						}
-					})
+					});
 				});
 
 				//if they do update the exsting one with the uploading files grade.
@@ -126,10 +127,13 @@ module.exports = (localApp, db) => {
 					console.log(errors);
 				})
 				.then(function(){
+					fs.unlink(filepath, err => {
+						console.log(err);
+					});
 					res.json({"test": "finished"});
-				}) 
+				}); 
 			}
-		})
+		});
 	});
 
 }
