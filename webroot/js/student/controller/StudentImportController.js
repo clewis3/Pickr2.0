@@ -4,7 +4,7 @@
 	angular.module('Student')
 		.controller('StudentImportController', ['$scope', '$location', 'Page', 'StudentFactory', function StudentImportController($scope, $location, Page, StudentFactory) {
 			Page.title("Import Students");
-			$scope.filetypes = ['text/plain'];
+			$scope.filetypes = ['text/csv'];
 			$scope.serverError = "";
 			$scope.importing = false;
 
@@ -18,7 +18,7 @@
 				$scope.uploadForm.files.$setValidity('fileType', true);
 				$scope.uploadForm.files.$setValidity('serverError', true);
 				var file = files[0]; // we only allow one file
-				if (file.type != "text/plain") {
+				if (file.type != "text/csv") {
 					$scope.uploadForm.files.$setValidity('fileType', false);
 				} else {
 					// upload 

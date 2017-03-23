@@ -1,6 +1,7 @@
 var fs = require("fs");
 var multer = require('multer');
 var upload = multer({dest: 'uploads/'})
+var parse = require('csv-parse');
 
 module.exports = (localApp, db) => {
 
@@ -17,6 +18,15 @@ module.exports = (localApp, db) => {
 
 			res.json(responseJSON);
 		});
+	});
+
+	localApp.delete('/api/students.json', (req, res) => {
+		db.student.destroy({
+			where: {},
+			truncate: true
+		}).then(() =>{
+			res.json({'data': 'deleted all'});
+		})
 	});
 
 	//deletes a student, but dont know which one
@@ -63,9 +73,76 @@ module.exports = (localApp, db) => {
 	});
 
 	//importing list
+	//add error to resplonse
 	localApp.post('/api/students/import.json', upload.single('file'),function(req, res) {
-		console.log(req.file.filename, req.body);
-		res.json({"test": "test"});
+		const filepath = req.file.path;
+		var csvData = [];
+		const input = 'last_name,first_name,grade_level,Student_Number';
+		var source = fs.createReadStream(filepath);
+
+		var parser = parse({
+	        delimiter: ',', 
+	        columns: ['last_name','first_name','grade_level','student_id']
+	    });
+
+		source.pipe(parser).on('data', function(csvRow) {
+			csvData.push(csvRow);
+		})
+		.on('error', function(error){
+			console.log(error.message);
+			res.json({'status': error.message});
+		})
+		.on('end', function() {
+			if (testKeys(csvData[0]) ) {
+				//send error
+				console.log('heading error');
+			} else {
+				//start bulk load
+				csvData.splice(0, 1);
+
+
+				//check if any of the data sets already exists
+				csvData.forEach((row, index) => {
+					console.log(index);
+					db.student.findOne({
+						where: {
+							student_id: row.student_id
+						}
+					}).then((student) => {
+						if (student != null) {
+							student.grade_level = row.grade_level
+							student.save().then(() => {
+								console.log(row.last_name + ' grade was updated to ' + row.grade_level);
+							})
+						}
+					})
+				});
+
+				//if they do update the exsting one with the uploading files grade.
+
+				console.log(csvData);
+				db.student.bulkCreate(csvData, { ignoreDuplicates: true })
+				.catch((errors) => {
+					console.log(errors);
+				})
+				.then(function(){
+					res.json({"test": "finished"});
+				}) 
+			}
+		})
 	});
 
+}
+
+
+
+//helper methods
+testKeys = (row) => {
+	errorMssg = "Wrong file structure. Check order or spelling of headings.";
+	if (row.last_name != "last_name" || row.first_name != "first_name" || row.grade_level != "grade_level" || row.student_id != "student_number"){
+		return errorMssg;
+	} else {
+		return false;
+	}
+	
 }

@@ -100,6 +100,7 @@ localApp.get('*', (req, res) =>{
 // });
 
 db.connection.sync().then(() => {
+  //Check users and see if users exists
   httpServer.listen(3000, function() {
     console.log('listening on port 3000');
   });
