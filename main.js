@@ -73,7 +73,7 @@ var router = require('./src/router/index.js');
 
 // localApp.use(cookieParser());
 // get information from html forms
-// localApp.use(bodyParser()); 
+localApp.use(bodyParser.json());
 
 // required for passport
 // localApp.use(session({ secret: 'asdfhasdlkjfhasdkfhasdlkfhsljh' })); // session secret
