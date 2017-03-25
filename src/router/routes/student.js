@@ -64,7 +64,8 @@ module.exports = (localApp, db) => {
 		const last_name = req.body.student.last_name;
 		const password = req.body.password;
 		//add something for multi threading here
-		loginCheck(first_name, last_name, password, req, res);
+		//loginCheck(first_name, last_name, password, req, res);
+		devLoginCheck(first_name,last_name,req,res);
 	});
 
 	//importing list
@@ -75,6 +76,31 @@ module.exports = (localApp, db) => {
 	});
 
 
+
+var devLoginCheck = (first_name, last_name,req, res) => {
+	if (first_name === "admin") {
+		res.json({"student": "admin", "password": "n/a", "admin":"true", "type": "admin"});
+	} else if(first_name === 'teacher') {
+		res.json({"student": "teacher", "password": "n/a", "admin":"false", "type": "teacher"});
+	} else {
+		db.student.findOne({
+			where: {
+					first_name: first_name,
+					last_name: last_name
+				}
+		}).then((student) => {
+		res.json({"student": { first_name: student.first_name, 
+							   last_name: student.last_name,
+								id: student.student_id,
+								grade_level: student.grade_level,
+								fullname: student.fullname }, 
+				 "password": "n/a", 
+				 "admin":"false", 
+				 "type": "student"});
+		
+		});
+	}
+}
 
 
 
@@ -103,7 +129,6 @@ var loginCheck = (first_name, last_name, password, req, res) =>{
 				}
 			});		
 		} else {
-			//add logic to check password & return data
 			db.student.findOne({
 				where: {
 					first_name: first_name,
