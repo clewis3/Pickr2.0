@@ -8,30 +8,6 @@ const path = require('path');
 const url = require('url');
 
 
-electron.ipcMain.on('passwords', (event,arg) => {
-  console.log(arg);
-  db.user.findAll().then((users) => {
-
-    var responseJSON = users.map((user) => {
-        const name = user.name;
-
-        if (user.name === 'admin') {
-          return {
-            admin: user.password
-          }
-        } else if (user.name === 'teacher') {
-          return {
-            teacher: user.password
-          }
-        } else{
-          return {}
-        }
-      });
-
-    event.sender.send('passwords', responseJSON);
-  });
-});
-
 function createWindow () {
   // Create the browser window.
   mainWindow = new BrowserWindow({width: 800, height: 600})
@@ -53,10 +29,32 @@ function createWindow () {
     // when you should delete the corresponding element.
     mainWindow = null
   })
-
-
-
 }
+
+//This is the event handeler for when the electron render 
+//process asks for the paswords to display
+electron.ipcMain.on('passwords', (event,arg) => {
+  console.log(arg);
+  db.user.findAll().then((users) => {
+    var responseJSON = users.map((user) => {
+        const name = user.name;
+
+        if (user.name === 'admin') {
+          return {
+            admin: user.password
+          }
+        } else if (user.name === 'teacher') {
+          return {
+            teacher: user.password
+          }
+        } else{
+          return {}
+        }
+      });
+
+    event.sender.send('passwords', responseJSON);
+  });
+});
 
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
@@ -105,20 +103,20 @@ localApp.use(morgan('tiny')); //prints useful info the terminal
 router(localApp,db);
 
 
-
 localApp.get('*', (req, res) =>{
   res.sendfile('webroot/index.html');
 });
 
 
+//creates a password
 var createPassword = () => {
   const randomstring = Math.random().toString(36).slice(-6);
   console.log('Password created to:' + randomstring);
   return randomstring
 }
 
-
-db.connection.sync().then(() => {
+//checks if there are users, if not, it creates the two main users.
+var createUsers = () => {
   //Check users and see if users exists
   db.user.findAndCountAll().then((users) => {
     console.log( users.count);
@@ -132,9 +130,12 @@ db.connection.sync().then(() => {
       console.log("Starting Application");
     }
   });
-  
-  //show passwords in the main applicaiton
+}
 
+
+//starts the main server, and checks the database is set up.
+db.connection.sync().then(() => {
+  createUsers()
   httpServer.listen(3000, function() {
     console.log('listening on port 3000');
   });

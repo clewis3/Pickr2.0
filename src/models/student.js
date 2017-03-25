@@ -1,4 +1,4 @@
-module.exports = (connection, Sequelize) =>  {
+    module.exports = (connection, Sequelize) =>  {
 	var Student = connection.define('student', {
         first_name: Sequelize.STRING,
         last_name: Sequelize.STRING,
