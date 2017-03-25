@@ -121,7 +121,6 @@ module.exports = (localApp, db) => {
 
 				//if they do update the exsting one with the uploading files grade.
 
-				console.log(csvData);
 				db.student.bulkCreate(csvData, { ignoreDuplicates: true })
 				.catch((errors) => {
 					console.log(errors);

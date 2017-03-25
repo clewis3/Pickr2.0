@@ -7,19 +7,44 @@ const BrowserWindow = electron.BrowserWindow;
 const path = require('path');
 const url = require('url');
 
+
+electron.ipcMain.on('passwords', (event,arg) => {
+  console.log(arg);
+  db.user.findAll().then((users) => {
+
+    var responseJSON = users.map((user) => {
+        const name = user.name;
+
+        if (user.name === 'admin') {
+          return {
+            admin: user.password
+          }
+        } else if (user.name === 'teacher') {
+          return {
+            teacher: user.password
+          }
+        } else{
+          return {}
+        }
+      });
+
+    event.sender.send('passwords', responseJSON);
+  });
+});
+
 function createWindow () {
   // Create the browser window.
   mainWindow = new BrowserWindow({width: 800, height: 600})
 
   // and load the index.html of the app.
   mainWindow.loadURL(url.format({
-    pathname: path.join(__dirname, 'index.html'),
+    pathname: path.join(__dirname, 'electron/index.html'),
     protocol: 'file:',
     slashes: true
   }));
 
   // Open the DevTools.
-  //mainWindow.webContents.openDevTools()
+  mainWindow.webContents.openDevTools()
 
   // Emitted when the window is closed.
   mainWindow.on('closed', function () {
@@ -28,6 +53,9 @@ function createWindow () {
     // when you should delete the corresponding element.
     mainWindow = null
   })
+
+
+
 }
 
 // This method will be called when Electron has finished
@@ -67,22 +95,11 @@ localApp.use(express.static(path.join(__dirname, 'webroot')));
 
 
 var router = require('./src/router/index.js');
-// var session = require('express-session');
-// var flash = require('connect-flash');
 
-// require('passport');
-// require('./config/passport').init(passport);
-
-// localApp.use(cookieParser());
 // get information from html forms
 localApp.use(bodyParser.json());
 localApp.use(bodyParser.urlencoded({ extended: true })); 
 
-// required for passport
-// localApp.use(session({ secret: 'asdfhasdlkjfhasdkfhasdlkfhsljh' })); // session secret
-// localApp.use(passport.initialize());
-// localApp.use(passport.session()); // persistent login sessions
-// localApp.use(flash()); // use connect-flash for flash messages stored in session
 
 localApp.use(morgan('tiny')); //prints useful info the terminal
 router(localApp,db);
@@ -93,14 +110,31 @@ localApp.get('*', (req, res) =>{
   res.sendfile('webroot/index.html');
 });
 
-// Catch any routes not already handed with an error message
-// localApp.use((request, response) => {
-//   var message = 'Error, did not understand path' + request.path;
-//   response.status(404).end(message);
-// });
+
+var createPassword = () => {
+  const randomstring = Math.random().toString(36).slice(-6);
+  console.log('Password created to:' + randomstring);
+  return randomstring
+}
+
 
 db.connection.sync().then(() => {
   //Check users and see if users exists
+  db.user.findAndCountAll().then((users) => {
+    console.log( users.count);
+    if (users.count === 0) {
+      db.user.bulkCreate([
+      {'name': 'admin', 'role': 'admin', 'password': createPassword() },
+      {'name': 'teacher', 'role': 'teacher', 'password': createPassword() } ]).then(() => {
+        console.log('Users are created for the first time');
+      });
+    } else {
+      console.log("Starting Application");
+    }
+  });
+  
+  //show passwords in the main applicaiton
+
   httpServer.listen(3000, function() {
     console.log('listening on port 3000');
   });
