@@ -48,10 +48,48 @@ module.exports = (localApp, db) => {
 	//clicking on student report this is the get
 	//list with [{id: first_name: last_name grade_level: tutorials:{id: name: cycle_id: room number: teacher name: max_students: _matchingData: {Cycles: {id: name: status : } }, "_joinData:{tutorial_id, id: student_id: locked:}}, fullname: }]
 	//Table has student name(first name alphabetical), gradelevel, tutorial name, instructor, room#
-
-	localApp.get('/api/students/active.json', (req, res) => {
-
-	});
+	// localApp.get('/api/students/active.json', (req, res) => {
+	// 	db.student.findAll({
+	// 		include: [
+	// 		{
+	// 			model: db.tutorial,
+	// 			include: [
+	// 				{
+	// 					model: db.cycle
+	// 				}
+	// 			]
+	// 		}
+	// 		]
+	// 	}).then((student) => {
+	// 		var responseJSON = students.map((student) => {
+	// 			return {
+	// 				full_name: student.full_name,
+	// 				first_name: student.first_name,
+	// 				last_name: student.last_name,
+	// 				grade_level: student.grade_level,
+	// 				id: student.student_id,
+	// 				tutorials: student.tutorials.map((tutorial) => {
+	// 					return {
+	// 						id: tutorial.id,
+	// 						name: tutorial.name,
+	// 						cycle_id: tutorial.cycle_id
+	// 						room_number: tutorial.room_number,
+	// 						teacher_name: tutorial.teacher_name,
+	// 						max_students: tutorial.max_students,
+	// 						cycles: tutorial.cycles.map((cycle) => {
+	// 							return {
+	// 									id: cycle.id,
+	// 									name: cycle.name,
+	// 									status: cycle.status
+	// 							} 
+	// 						});
+	// 					}
+	// 				});
+	// 			}
+	// 		});
+	// 		res.json(responseJSON);
+	// 	});
+	// });
 
 	localApp.get('/api/students/:id', (req, res) => {
 
