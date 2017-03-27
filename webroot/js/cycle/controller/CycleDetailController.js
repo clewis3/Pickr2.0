@@ -12,6 +12,8 @@
 				Page.title($scope.cycle.name+" Tutorials");
 			});
 
+			console.log($scope.tutorials.length);
+
 			var find = function(id) {
 				for (var i=0; i<$scope.tutorials.length; i++) {
 					if ($scope.tutorials[i].id == id) {

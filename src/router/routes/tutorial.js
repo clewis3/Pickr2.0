@@ -5,58 +5,54 @@ module.exports = (localApp, db) => {
 	});
 
 
-    // Retrieve all tutorials 
-    localApp.get('/api/cycles/:cycle_id/tutorials.json', (req, res) => {
-        db.tutorial.findAll().then((tutorials) => {
-            
-            var responseJSON = tutorials.map((tutorial) => {
-                return {
-                    // change these
-                    name: tutorial.name,
-                    room_number: tutorial.room_number,
-                    teacher_name: tutorial.teacher_name,
-                    max_students: tutorial.max_students
-                }
-            });
-
-            res.json(responseJSON);
-        });
-    });
+    // Retrieve all tutorials is in src/router/routes/cycle.js
 
     // Tutorial details - tutorialDetailController.js and tutorial/view/detail.html
     localApp.get('/api/cycles/:cycle_id/tutorials/:tutorial_id.json', (req, res) => {
         // console.log(req.params);
         // console.log("___________________________");
         // console.log(req);
-
-
     })
 
-    // Creating tutorials
+    // Add tutorials
     localApp.post('/api/cycles/:cycle_id/tutorials.json', (req, res) => {
-        const name = req.body.name;
-        const teacher_name = req.body.teacher_name;
-        const room_number = req.body.room_number;
-        const max_students = req.body.max_students;
-
-        db.tutorial.findOne({
-            where: {
-                    name: name,
-                }
+        console.log("cycle id for adding tutorials ", req.params.cycle_id);
+        db.tutorial.create({
+            name: req.body.name,
+            teacher_name: req.body.teacher_name,
+            room_number: req.body.room_number,
+            max_students: req.body.max_students,
+            cycleId: req.params.cycle_id
         }).then((tutorial) => {
-        res.json({"tutorial": { name: name,
-                                teacher_name: teacher_name,
-                                room_number: room_number,
-                                max_students: max_students}, 
-            });
-        
+            // console.log("got new tutorial", tutorial);
+            res.json(tutorial);
+        }).catch(function(errors) {
+            console.log(errors);
         });
-
     });
 
     // Editting tutorials
     localApp.put('/api/cycles/:cycle_id/tutorials.json', (req, res) => {
-
+        console.log(req.params.id.slice(0,-5));
+        console.log(req.body);
+        const reqid = req.params.id.slice(0,-5);
+        db.tutorial.findOne({
+            where: {
+                id: reqid
+            }
+        }).then((tutorial) => {
+                if (tutorial) {
+                    tutorial.update(req.body).then((tutorialUpdate) => {
+                        //update the cycle and then only return that cycle
+                        if (tutorialUpdate) {
+                            res.json(tutorialUpdate);
+                        }
+                    })
+                    .catch(function (error){
+                    res.status(500).json(error);
+                    });
+                }
+        });
 
     });
 }
