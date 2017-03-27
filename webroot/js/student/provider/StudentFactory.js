@@ -8,9 +8,12 @@
 				upload: function(file) {
 					var defer = $q.defer();
 					var formData = new FormData();
-					formData.append('list', file, file.name);
+					formData.append('file', file);
 					
-					$http.post(Constants.api_url()+"students/import.json", formData).success(function(data) {
+					$http.post(Constants.api_url()+"students/import.json", formData, {
+              			transformRequest: angular.identity,
+              			headers: { 'Content-Type': undefined, enctype: 'multipart/form-data' } 
+              		}).success(function(data) {
 						defer.resolve(data);
 					}).error(function(data, status) {
 						if (data === null) {
