@@ -7,7 +7,7 @@ module.exports = (localApp, db) => {
 
 	localApp.get('/api/students.json', (req, res) => {
 		db.student.findAll().then((students) => {
-			
+
 			var responseJSON = students.map((student) => {
 				return {
 					full_name: student.full_name,
@@ -229,3 +229,4 @@ testKeys = (row) => {
 		return false;
 	}
 }
+
