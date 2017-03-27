@@ -89,15 +89,15 @@ var devLoginCheck = (first_name, last_name,req, res) => {
 					last_name: last_name
 				}
 		}).then((student) => {
-		res.json({"student": { first_name: student.first_name, 
+		res.json({"student": { first_name: student.first_name,
 							   last_name: student.last_name,
 								id: student.student_id,
 								grade_level: student.grade_level,
-								fullname: student.fullname }, 
-				 "password": "n/a", 
-				 "admin":"false", 
+								fullname: student.fullname },
+				 "password": "n/a",
+				 "admin":"false",
 				 "type": "student"});
-		
+
 		});
 	}
 }
@@ -127,7 +127,7 @@ var loginCheck = (first_name, last_name, password, req, res) =>{
 				} else {
 					res.status(403).json({'message': 'Forbidden'})
 				}
-			});		
+			});
 		} else {
 			db.student.findOne({
 				where: {
@@ -136,13 +136,13 @@ var loginCheck = (first_name, last_name, password, req, res) =>{
 				}
 			}).then((student) => {
 				if (student.student_id == password) {
-					res.json({"student": { first_name: student.first_name, 
+					res.json({"student": { first_name: student.first_name,
 										   last_name: student.last_name,
 											id: student.student_id,
 											grade_level: student.grade_level,
-											fullname: student.fullname }, 
-							 "password": "n/a", 
-							 "admin":"false", 
+											fullname: student.fullname },
+							 "password": "n/a",
+							 "admin":"false",
 							 "type": "student"});
 				} else {
 					res.status(403).json({'message': 'Forbidden'})
@@ -158,7 +158,7 @@ var importCSV = (filepath, req, res) =>{
 	var source = fs.createReadStream(filepath);
 
 	var parser = parse({
-        delimiter: ',', 
+        delimiter: ',',
         columns: ['last_name','first_name','grade_level','student_id']
     });
 
@@ -207,7 +207,7 @@ var importCSV = (filepath, req, res) =>{
 					console.log(err);
 				});
 				res.json({"test": "finished"});
-			}); 
+			});
 		}
 	});
 }
