@@ -35,12 +35,28 @@ module.exports = (localApp, db) => {
 				id: reqid
 			}
 		}).then((cycle) => {
-			console.log("got th cycle", cycle);
+			console.log("got the cycle", cycle);
 			if (cycle) {
 				res.json(cycle);
 			}
 		})
 	});
+
+
+	//adds a cycle
+	localApp.post('/api/cycles.json', (req, res) => {
+		db.cycle.create({
+			name: req.body.name,
+			status: req.body.status
+		}).then((cycle) => {
+			console.log("got new cycle", cycle);
+			res.json(cycle);
+		})
+		.catch(function(errors) {
+			console.log(errors)
+		});
+	});
+
 
 
 
