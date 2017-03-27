@@ -105,38 +105,4 @@ module.exports = (localApp, db) => {
 		});
 	});
 
-
-//localApp.put('/api/cycles/:id', (req, res) => {
-//  db.cycle.update(req.body, {
-//    where: {
-//      cycle_id: req.params.id.slice(0,-5)
-//    }
-//  })
-//  .then(function (updatedRecords) {
-//    res.status(200).json(updatedRecords);
-//  })
- // .catch(function (error){
- //   res.status(500).json(error);
- // });
-//});
-
-// localApp.put('/api/cycles/:id', (req, res) => {
-		// console.log(req.params.id.slice(0,-5));
-		// console.log(req.body);
-		// db.cycle.findOne({
-			// where: {
-				// id: req.params.id.slice(0,-5)
-			// }
-		// }).then((cycle) => {
-				// if (cycle) {
-					// cycle.update(req.body);
-					// return res.json({cycle});
-				// }
-				// else {
-//
-				// }
-			// })
-		// });
-
-
 }
