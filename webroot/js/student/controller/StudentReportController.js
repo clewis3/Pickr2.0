@@ -5,6 +5,7 @@
 		.controller('StudentReportController', ['$scope', 'Page', 'StudentResource', function($scope, Page, StudentResource) {
 			Page.title('Student Report');
 
+			//goes through all students and finds which students are signed up for a tutorial in the active cycle
 			$scope.students = StudentResource.query({id:"active"}, function() {
 				console.log($scope.students);
 				for (var i=0; i<$scope.students.length; i++) {

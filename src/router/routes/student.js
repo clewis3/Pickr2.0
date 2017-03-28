@@ -47,7 +47,7 @@ module.exports = (localApp, db) => {
 
 	//clicking on student report this is the get
 	//list with [{id: first_name: last_name grade_level: tutorials:{id: name: cycle_id: room number: teacher name: max_students: _matchingData: {Cycles: {id: name: status : } }, "_joinData:{tutorial_id, id: student_id: locked:}}, fullname: }]
-	//Table has student name(first name alphabetical), gradelevel, tutorial name, instructor, room#
+	//Table has student name(first name alphabetical), grade level, tutorial name, instructor, room #
 	localApp.get('/api/students/active.json', (req, res) => {
 		db.student.findAll({
 			include: [
@@ -58,6 +58,7 @@ module.exports = (localApp, db) => {
 						model: db.cycle,
 						where: {
 							status: "Active"
+							//gets all students that have a tutorial in the active cycle
 						}
 					}
 				]
@@ -65,7 +66,7 @@ module.exports = (localApp, db) => {
 			]
 		}).then((student) => {
 			var responseJSON = student.map((student) => {
-				console.log( JSON.parse(JSON.stringify(student)) );
+				 //console.log( JSON.parse(JSON.stringify(student)) );
 				return {
 					full_name: student.full_name,
 					first_name: student.first_name,
@@ -73,7 +74,7 @@ module.exports = (localApp, db) => {
 					grade_level: student.grade_level,
 					id: student.student_id,
 					tutorial: student.tutorials.map((tutorial) => {
-						//console.log( tutorial.room_number );
+					 //console.log( tutorial.room_number );
 						return {
 							id: tutorial.id,
 							name: tutorial.name,
@@ -82,7 +83,7 @@ module.exports = (localApp, db) => {
 							teacher_name: tutorial.teacher_name,
 							max_students: tutorial.max_students,
 							cycle: [tutorial.cycle].map((cycle) => {
-								//console.log(cycle)
+								//map only works for arrays
 								return {
 									id: cycle.id,
 									name: cycle.name,
@@ -97,11 +98,6 @@ module.exports = (localApp, db) => {
 			res.json(responseJSON);
 		});
 	});
-
-	localApp.get('/api/students/:id', (req, res) => {
-
-	});
-
 
 	//login for users
 	localApp.post('/api/students/login.json', (req, res) => {
