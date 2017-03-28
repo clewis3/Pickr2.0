@@ -31,28 +31,28 @@ module.exports = (localApp, db) => {
         });
     });
 
-    // Editting tutorials
-    localApp.put('/api/cycles/:cycle_id/tutorials.json', (req, res) => {
-        console.log(req.params.id.slice(0,-5));
-        console.log(req.body);
-        const reqid = req.params.id.slice(0,-5);
-        db.tutorial.findOne({
-            where: {
-                id: reqid
-            }
-        }).then((tutorial) => {
-                if (tutorial) {
-                    tutorial.update(req.body).then((tutorialUpdate) => {
-                        //update the cycle and then only return that cycle
-                        if (tutorialUpdate) {
-                            res.json(tutorialUpdate);
-                        }
-                    })
-                    .catch(function (error){
-                    res.status(500).json(error);
-                    });
-                }
-        });
+    // // Editting tutorials
+    // localApp.put('/api/cycles/:cycle_id/tutorials.json', (req, res) => {
+    //     console.log(req.params.id.slice(0,-5));
+    //     console.log(req.body);
+    //     const reqid = req.params.id.slice(0,-5);
+    //     db.tutorial.findOne({
+    //         where: {
+    //             id: reqid
+    //         }
+    //     }).then((tutorial) => {
+    //             if (tutorial) {
+    //                 tutorial.update(req.body).then((tutorialUpdate) => {
+    //                     //update the cycle and then only return that cycle
+    //                     if (tutorialUpdate) {
+    //                         res.json(tutorialUpdate);
+    //                     }
+    //                 })
+    //                 .catch(function (error){
+    //                 res.status(500).json(error);
+    //                 });
+    //             }
+    //     });
 
-    });
+    // });
 }
