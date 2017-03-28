@@ -55,38 +55,45 @@ module.exports = (localApp, db) => {
 				model: db.tutorial,
 				include: [
 					{
-						model: db.cycle
+						model: db.cycle,
+						where: {
+							status: "Active"
+						}
 					}
 				]
 			}
 			]
 		}).then((student) => {
 			var responseJSON = student.map((student) => {
+				console.log( JSON.parse(JSON.stringify(student)) );
 				return {
 					full_name: student.full_name,
 					first_name: student.first_name,
 					last_name: student.last_name,
 					grade_level: student.grade_level,
 					id: student.student_id,
-					tutorials: student.tutorials.map((tutorial) => {
+					tutorial: student.tutorials.map((tutorial) => {
+						//console.log( tutorial.room_number );
 						return {
 							id: tutorial.id,
 							name: tutorial.name,
-							cycle_id: tutorial.cycle_id,
+							cycle_id: tutorial.cycleId,
 							room_number: tutorial.room_number,
 							teacher_name: tutorial.teacher_name,
 							max_students: tutorial.max_students,
-							cycles: tutorial.cycles.map((cycle) => {
+							cycle: [tutorial.cycle].map((cycle) => {
+								//console.log(cycle)
 								return {
-										id: cycle.id,
-										name: cycle.name,
-										status: cycle.status
+									id: cycle.id,
+									name: cycle.name,
+									status: cycle.status
 								}
 							})
 						}
 					})
 				}
 			});
+			//console.log(responseJSON[0].tutorial, responseJSON[0].tutorial[0].cycle);
 			res.json(responseJSON);
 		});
 	});
