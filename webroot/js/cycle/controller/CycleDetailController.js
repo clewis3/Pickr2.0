@@ -12,7 +12,7 @@
 				Page.title($scope.cycle.name+" Tutorials");
 			});
 
-			console.log($scope.tutorials.length);
+			// console.log($scope.tutorials.length);
 
 			var find = function(id) {
 				for (var i=0; i<$scope.tutorials.length; i++) {
@@ -45,7 +45,10 @@
 
 			$scope.navigate = function(id) {
 				$location.path("/admin/cycles/"+$scope.cycle.id+"/tutorials/"+id);
+				console.log("$scope.cycle.id: ", $scope.cycles);
+				console.log("tutorial id: ", id);
 			};
+	
 
 			$scope.edit = function(id, ev) {
 				var i = find(id);

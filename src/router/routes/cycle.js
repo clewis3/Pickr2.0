@@ -10,6 +10,7 @@ module.exports = (localApp, db) => {
             
             	var responseJSON = tutorials.map((tutorial) => {
 	                return {
+	                	id: tutorial.id,
 	                    name: tutorial.name,
 	                    room_number: tutorial.room_number,
 	                    teacher_name: tutorial.teacher_name,
