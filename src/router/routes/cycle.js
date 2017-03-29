@@ -23,7 +23,7 @@ module.exports = (localApp, db) => {
 
 	localApp.put('/api/cycles/:cycle_id/tutorials/:tutorial_id/.json', (req, res) => {
 
-	});
+	}); 
 
 	//gets all the cycles 
 	localApp.get('/api/cycles.json', (req, res) =>{
@@ -50,19 +50,12 @@ module.exports = (localApp, db) => {
 			}
 		}).then((cycle) => {
 			console.log("got the cycle", cycle.id);
-			
-			db.tutorial.findAll( { where: { cycleId: [cycle.id] } } ).then((tutorials) => {
-            
-            	var responseJSON = tutorials.map((tutorial) => {
-	                return {
-	                    name: tutorial.name,
-	                    room_number: tutorial.room_number,
-	                    teacher_name: tutorial.teacher_name,
-	                    max_students: tutorial.max_students
-	                }
-            	});
-            	res.json(responseJSON);
-        	});
+   			var responseJSON = {
+   				id: cycle.id,
+   				name: cycle.name,
+   				status: cycle.status
+   			}
+   			res.json(responseJSON);
 		});
 	});
 

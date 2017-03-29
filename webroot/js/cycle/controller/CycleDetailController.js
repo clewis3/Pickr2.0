@@ -8,9 +8,11 @@
 				$scope.message = "No tutorials added yet"
 			});
 
+
 			$scope.cycle = CycleResource.get({id:$routeParams.id}, function() {
 				Page.title($scope.cycle.name+" Tutorials");
 			});
+
 
 			// console.log($scope.tutorials.length);
 
@@ -45,7 +47,7 @@
 
 			$scope.navigate = function(id) {
 				$location.path("/admin/cycles/"+$scope.cycle.id+"/tutorials/"+id);
-				console.log("$scope.cycle.id: ", $scope.cycles);
+				console.log("$scope.cycle.id: ", $scope.cycle);
 				console.log("tutorial id: ", id);
 			};
 	

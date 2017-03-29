@@ -31,11 +31,12 @@ module.exports = (localApp, db) => {
         });
     });
 
+
     // Editting tutorials
-    localApp.put('/api/cycles/:cycle_id/tutorials.json', (req, res) => {
+    localApp.put('/api/cycles/tutorials/:id.json', (req, res) => {
         console.log("req.params.id.slice(1,-5) ", req.params.id.slice(0,-5));
         console.log("req.body ", req.body);
-        const reqid = req.params.id.slice(0,-5);
+        const reqid = req.body.id;
         db.tutorial.findOne({
             where: {
                 id: reqid
