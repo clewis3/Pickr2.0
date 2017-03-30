@@ -9,9 +9,10 @@ module.exports = (localApp, db) => {
 
     // Tutorial details - tutorialDetailController.js and tutorial/view/detail.html
     localApp.get('/api/cycles/:cycle_id/tutorials/:tutorial_id.json', (req, res) => {
-        // console.log(req.params);
-        // console.log("___________________________");
-        // console.log(req);
+        console.log(req.params);
+        console.log("___________________________");
+        console.log(req);
+        
     })
 
     // Add tutorials
@@ -56,5 +57,9 @@ module.exports = (localApp, db) => {
                 }
         });
     });
-    // /api/cycles/tutorials/1.json
+    
+    localApp.put('/api/cycles/tutorials/:id.json', (req, res) => {
+        
+    });
+
 }
