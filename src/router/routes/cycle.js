@@ -66,7 +66,6 @@ module.exports = (localApp, db) => {
 			name: req.body.name,
 			status: req.body.status
 		}).then((cycle) => {
-			console.log("got new cycle", cycle);
 			res.json(cycle);
 		})
 		.catch(function(errors) {
