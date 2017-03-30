@@ -5,20 +5,19 @@ module.exports = (localApp, db) => {
 	//view is tutorials/index
 	//We should refactor the count for each tutorial
 	localApp.get('/api/cycles/:id/tutorials.json', (req, res) => {
-		// console.log("req.params.id is ", req.params.id);
-		db.tutorial.findAll( { where: { cycleId: [req.params.id] } } ).then((tutorials) => {
-            
-            	var responseJSON = tutorials.map((tutorial) => {
-	                return {
-	                	id: tutorial.id,
-	                    name: tutorial.name,
-	                    room_number: tutorial.room_number,
-	                    teacher_name: tutorial.teacher_name,
-	                    max_students: tutorial.max_students
-	                }
-            	});
-            	res.json(responseJSON);
+		
+		db.tutorial.findAll( { where: { cycleId: [req.params.id] } } ).then((tutorials) => {        
+        	var responseJSON = tutorials.map((tutorial) => {
+                return {
+                	id: tutorial.id,
+                    name: tutorial.name,
+                    room_number: tutorial.room_number,
+                    teacher_name: tutorial.teacher_name,
+                    max_students: tutorial.max_students
+                }
         	});
+        	res.json(responseJSON);
+    	});
 	});
 
 	localApp.put('/api/cycles/:cycle_id/tutorials/:tutorial_id/.json', (req, res) => {
