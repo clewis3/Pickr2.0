@@ -36,6 +36,8 @@
 
 			$scope.navigate = function(id) {
 				$location.path("/admin/cycles/"+id);
+				// console.log("cycle id: ", id);
+
 			};
 
 			$scope.edit = function(id, ev) {

@@ -5,18 +5,32 @@ module.exports = (localApp, db) => {
 	//view is tutorials/index
 	//We should refactor the count for each tutorial
 	localApp.get('/api/cycles/:id/tutorials.json', (req, res) => {
-
+		// console.log("req.params.id is ", req.params.id);
+		db.tutorial.findAll( { where: { cycleId: [req.params.id] } } ).then((tutorials) => {
+            
+            	var responseJSON = tutorials.map((tutorial) => {
+	                return {
+	                	id: tutorial.id,
+	                    name: tutorial.name,
+	                    room_number: tutorial.room_number,
+	                    teacher_name: tutorial.teacher_name,
+	                    max_students: tutorial.max_students
+	                }
+            	});
+            	res.json(responseJSON);
+        	});
 	});
 
 	localApp.put('/api/cycles/:cycle_id/tutorials/:tutorial_id/.json', (req, res) => {
 
-	});
+	}); 
 
-	//gets all the cycles
+	//gets all the cycles 
 	localApp.get('/api/cycles.json', (req, res) =>{
 		db.cycle.findAll().then((cycles) => {
 
 			var responseJSON = cycles.map((cycle) => {
+				// console.log(cycle);
 				return {
 					id: cycle.id,
 					name: cycle.name,
@@ -27,7 +41,7 @@ module.exports = (localApp, db) => {
 		});
 	});
 
-	//note that the angular request uses id + .json
+	// gets tutorials for a cycle id 
 	localApp.get('/api/cycles/:id', (req, res) => {
 		const reqid = req.params.id.slice(0,-5);
 		db.cycle.findOne({
@@ -35,15 +49,18 @@ module.exports = (localApp, db) => {
 				id: reqid
 			}
 		}).then((cycle) => {
-			console.log("got the cycle", cycle);
-			if (cycle) {
-				res.json(cycle);
-			}
-		})
+			console.log("got the cycle", cycle.id);
+   			var responseJSON = {
+   				id: cycle.id,
+   				name: cycle.name,
+   				status: cycle.status
+   			}
+   			res.json(responseJSON);
+		});
 	});
 
 
-	//adds a cycle
+	// adds a cycle
 	localApp.post('/api/cycles.json', (req, res) => {
 		db.cycle.create({
 			name: req.body.name,
@@ -55,10 +72,6 @@ module.exports = (localApp, db) => {
 			console.log(errors)
 		});
 	});
-
-
-
-
 
 	//deletes a cycle
 	localApp.delete('/api/cycles/:id', (req, res) => {
@@ -103,5 +116,4 @@ module.exports = (localApp, db) => {
 				}
 		});
 	});
-
 }
