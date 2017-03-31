@@ -5,8 +5,20 @@ module.exports = (localApp, db) => {
 	//view is tutorials/index
 	//We should refactor the count for each tutorial
 	localApp.get('/api/cycles/:id/tutorials.json', (req, res) => {
-		
-		db.tutorial.findAll( { where: { cycleId: [req.params.id] } } ).then((tutorials) => {        
+		const cycle_id = req.params.id;
+
+		if (cycle_id == 0) {
+			db.tutorial.findAll({
+				include: [
+				{
+					model: db.cycle,
+					where: db.Sequelize.or({status: 'Active'},{status: 'Open'})		
+				}]
+			}).then((tutorials) => {
+				res.json( JSON.parse(JSON.stringify(tutorials)));
+			});
+		} else {
+			db.tutorial.findAll( { where: { cycleId: [req.params.id] } } ).then((tutorials) => {        
         	var responseJSON = tutorials.map((tutorial) => {
                 return {
                 	id: tutorial.id,
@@ -18,7 +30,9 @@ module.exports = (localApp, db) => {
         	});
         	res.json(responseJSON);
     	});
+		}
 	});
+
 
 	localApp.put('/api/cycles/:cycle_id/tutorials/:tutorial_id/.json', (req, res) => {
 
