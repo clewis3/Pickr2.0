@@ -5,13 +5,15 @@
 		.controller('StudentReportController', ['$scope', 'Page', 'StudentResource', function($scope, Page, StudentResource) {
 			Page.title('Student Report');
 
+			//goes through all students and finds which students are signed up for a tutorial in the active cycle
 			$scope.students = StudentResource.query({id:"active"}, function() {
+				console.log($scope.students);
 				for (var i=0; i<$scope.students.length; i++) {
 					var student = $scope.students[i];
-					if (student.tutorials.length) {
-						student.tutorial = student.tutorials[0].name;
-						student.instructor = student.tutorials[0].teacher_name;
-						student.room = student.tutorials[0].room_number;
+					if (student.tutorial.length) {
+						student.instructor = student.tutorial[0].teacher_name;
+						student.room = student.tutorial[0].room_number;
+						student.tutorial = student.tutorial[0].name;
 					}
 				}
 			});

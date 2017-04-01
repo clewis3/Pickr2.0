@@ -5,7 +5,7 @@
 		.controller('LandingController', ['$scope', '$filter', '$location', 'Page', 'StudentResource', 'StudentFactory', function LandingController($scope, $filter, $location, Page, StudentResource, StudentFactory) {
 			Page.title("Kodiak - Login");
 			
-			$scope.students = StudentResource.query(function() {
+			$scope.students = StudentResource.query({id:0}, function() {
 				$scope.students.push({
 					first_name:"admin",
 				});

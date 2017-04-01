@@ -1,6 +1,6 @@
 var fs = require("fs");
 var multer = require('multer');
-var upload = multer({dest: 'uploads/'})
+var upload = multer({dest: __dirname + '/uploads/'})
 var parse = require('csv-parse');
 
 module.exports = (localApp, db) => {
@@ -19,6 +19,25 @@ module.exports = (localApp, db) => {
 
 			res.json(responseJSON);
 		});
+	});
+
+	localApp.get('/api/students/:id', (req, res) => {
+		const id = req.params.id.slice(0,-5);
+		if (id == 0) {
+			db.student.findAll().then((students) => {
+				var responseJSON = students.map((student) => {
+					return {
+						full_name: student.full_name,
+						first_name: student.first_name,
+						last_name: student.last_name,
+					}
+				});
+
+				res.json(responseJSON);
+			});
+		} else {
+			//get a specific student
+		}
 	});
 
 	localApp.delete('/api/students.json', (req, res) => {
@@ -46,54 +65,57 @@ module.exports = (localApp, db) => {
 
 	//clicking on student report this is the get
 	//list with [{id: first_name: last_name grade_level: tutorials:{id: name: cycle_id: room number: teacher name: max_students: _matchingData: {Cycles: {id: name: status : } }, "_joinData:{tutorial_id, id: student_id: locked:}}, fullname: }]
-	//Table has student name(first name alphabetical), gradelevel, tutorial name, instructor, room#
-	// localApp.get('/api/students/active.json', (req, res) => {
-	// 	db.student.findAll({
-	// 		include: [
-	// 		{
-	// 			model: db.tutorial,
-	// 			include: [
-	// 				{
-	// 					model: db.cycle
-	// 				}
-	// 			]
-	// 		}
-	// 		]
-	// 	}).then((student) => {
-	// 		var responseJSON = students.map((student) => {
-	// 			return {
-	// 				full_name: student.full_name,
-	// 				first_name: student.first_name,
-	// 				last_name: student.last_name,
-	// 				grade_level: student.grade_level,
-	// 				id: student.student_id,
-	// 				tutorials: student.tutorials.map((tutorial) => {
-	// 					return {
-	// 						id: tutorial.id,
-	// 						name: tutorial.name,
-	// 						cycle_id: tutorial.cycle_id
-	// 						room_number: tutorial.room_number,
-	// 						teacher_name: tutorial.teacher_name,
-	// 						max_students: tutorial.max_students,
-	// 						cycles: tutorial.cycles.map((cycle) => {
-	// 							return {
-	// 									id: cycle.id,
-	// 									name: cycle.name,
-	// 									status: cycle.status
-	// 							} 
-	// 						});
-	// 					}
-	// 				});
-	// 			}
-	// 		});
-	// 		res.json(responseJSON);
-	// 	});
-	// });
-
-	localApp.get('/api/students/:id', (req, res) => {
-
+	//Table has student name(first name alphabetical), grade level, tutorial name, instructor, room #
+	localApp.get('/api/students/active.json', (req, res) => {
+		db.student.findAll({
+			include: [
+			{
+				model: db.tutorial,
+				include: [
+					{
+						model: db.cycle,
+						where: {
+							status: "Active"
+							//gets all students that have a tutorial in the active cycle
+						}
+					}
+				]
+			}
+			]
+		}).then((student) => {
+			var responseJSON = student.map((student) => {
+				 //console.log( JSON.parse(JSON.stringify(student)) );
+				return {
+					full_name: student.full_name,
+					first_name: student.first_name,
+					last_name: student.last_name,
+					grade_level: student.grade_level,
+					id: student.student_id,
+					tutorial: student.tutorials.map((tutorial) => {
+					 //console.log( tutorial.room_number );
+						return {
+							id: tutorial.id,
+							name: tutorial.name,
+							cycle_id: tutorial.cycleId,
+							room_number: tutorial.room_number,
+							teacher_name: tutorial.teacher_name,
+							max_students: tutorial.max_students,
+							cycle: [tutorial.cycle].map((cycle) => {
+								//map only works for arrays
+								return {
+									id: cycle.id,
+									name: cycle.name,
+									status: cycle.status
+								}
+							})
+						}
+					})
+				}
+			});
+			//console.log(responseJSON[0].tutorial, responseJSON[0].tutorial[0].cycle);
+			res.json(responseJSON);
+		});
 	});
-
 
 	//login for users
 	localApp.post('/api/students/login.json', (req, res) => {
@@ -126,15 +148,15 @@ var devLoginCheck = (first_name, last_name,req, res) => {
 					last_name: last_name
 				}
 		}).then((student) => {
-		res.json({"student": { first_name: student.first_name, 
+		res.json({"student": { first_name: student.first_name,
 							   last_name: student.last_name,
 								id: student.student_id,
 								grade_level: student.grade_level,
-								fullname: student.fullname }, 
-				 "password": "n/a", 
-				 "admin":"false", 
+								fullname: student.fullname },
+				 "password": "n/a",
+				 "admin":"false",
 				 "type": "student"});
-		
+
 		});
 	}
 }
@@ -164,7 +186,7 @@ var loginCheck = (first_name, last_name, password, req, res) =>{
 				} else {
 					res.status(403).json({'message': 'Forbidden'})
 				}
-			});		
+			});
 		} else {
 			db.student.findOne({
 				where: {
@@ -173,13 +195,13 @@ var loginCheck = (first_name, last_name, password, req, res) =>{
 				}
 			}).then((student) => {
 				if (student.student_id == password) {
-					res.json({"student": { first_name: student.first_name, 
+					res.json({"student": { first_name: student.first_name,
 										   last_name: student.last_name,
 											id: student.student_id,
 											grade_level: student.grade_level,
-											fullname: student.fullname }, 
-							 "password": "n/a", 
-							 "admin":"false", 
+											fullname: student.fullname },
+							 "password": "n/a",
+							 "admin":"false",
 							 "type": "student"});
 				} else {
 					res.status(403).json({'message': 'Forbidden'})
@@ -195,7 +217,7 @@ var importCSV = (filepath, req, res) =>{
 	var source = fs.createReadStream(filepath);
 
 	var parser = parse({
-        delimiter: ',', 
+        delimiter: ',',
         columns: ['last_name','first_name','grade_level','student_id']
     });
 
@@ -244,7 +266,7 @@ var importCSV = (filepath, req, res) =>{
 					console.log(err);
 				});
 				res.json({"test": "finished"});
-			}); 
+			});
 		}
 	});
 }
