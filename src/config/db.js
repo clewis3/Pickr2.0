@@ -25,4 +25,5 @@ db.tutorial.belongsTo(db.cycle);
 db.tutorial.belongsToMany(db.student, {through: db.student_tutorial} );
 db.student.belongsToMany(db.tutorial, {through: db.student_tutorial} );
 
+
 module.exports = db;

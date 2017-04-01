@@ -37,7 +37,6 @@
 				var result = [];
 				for (var i=0; i<tutorials.length; i++) {
 					if (/*tutorials[i].id != $scope.tutorial.id && */tutorials[i].students <= tutorials[i].max_students) {
-						console.log('test')
 						result.push(tutorials[i]);
 					}
 				}
@@ -45,7 +44,7 @@
 			};
 
 			$scope.full = function(tut) {
-				return tut.max_students <= tut.students.length;
+				return tut.max_students <= tut.students;
 			};
 
 			$scope.select = function(id, ev) {

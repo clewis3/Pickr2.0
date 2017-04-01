@@ -1,7 +1,8 @@
 module.exports = (localApp, db) => {
 
 	localApp.post('/api/tutorials/:tutorial_id/students/:id', (req, res) =>{
-
+        const tutorialId = req.params.tutorialId;
+        const studentId = req.params.studentId.slice(0,-5);
 	});
 
 

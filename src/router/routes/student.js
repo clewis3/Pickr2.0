@@ -63,6 +63,12 @@ module.exports = (localApp, db) => {
 		});
 	});
 
+	localApp.post('/api/tutorials/:tutorialId/students/:studentId', (req, res) => {
+		const tutorialId = req.params.tutorialId;
+		const studentId = req.params.studentId.slice(0,-5);
+		console.log('got it', tutorialId, studentId)
+	});
+
 	//clicking on student report this is the get
 	//list with [{id: first_name: last_name grade_level: tutorials:{id: name: cycle_id: room number: teacher name: max_students: _matchingData: {Cycles: {id: name: status : } }, "_joinData:{tutorial_id, id: student_id: locked:}}, fullname: }]
 	//Table has student name(first name alphabetical), grade level, tutorial name, instructor, room #
@@ -146,8 +152,15 @@ var devLoginCheck = (first_name, last_name,req, res) => {
 			where: {
 					first_name: first_name,
 					last_name: last_name
-				}
+				},
+				include: [{
+					model: db.tutorial,
+					include: [{
+						model: db.cycle
+					}]
+				}]
 		}).then((student) => {
+		console.log(JSON.parse(JSON.stringify(student)));
 		res.json({"student": { first_name: student.first_name,
 							   last_name: student.last_name,
 								id: student.student_id,
@@ -155,7 +168,8 @@ var devLoginCheck = (first_name, last_name,req, res) => {
 								fullname: student.fullname },
 				 "password": "n/a",
 				 "admin":"false",
-				 "type": "student"});
+				 "type": "student",
+				 "tutorials": student.tutorials});
 
 		});
 	}
@@ -192,8 +206,15 @@ var loginCheck = (first_name, last_name, password, req, res) =>{
 				where: {
 					first_name: first_name,
 					last_name: last_name
-				}
+				},
+				include: [{
+					model: db.tutorial,
+					include: [{
+						model: db.cycle
+					}]
+				}]
 			}).then((student) => {
+				console.log(JSON.parse(JSON.stringify(student)));
 				if (student.student_id == password) {
 					res.json({"student": { first_name: student.first_name,
 										   last_name: student.last_name,
@@ -202,7 +223,8 @@ var loginCheck = (first_name, last_name, password, req, res) =>{
 											fullname: student.fullname },
 							 "password": "n/a",
 							 "admin":"false",
-							 "type": "student"});
+							 "type": "student",
+							 "tutorials": student.tutorials});
 				} else {
 					res.status(403).json({'message': 'Forbidden'})
 				}
