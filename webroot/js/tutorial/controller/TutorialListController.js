@@ -13,12 +13,13 @@
 			};
 			//if (!!$scope.user.tutorials.length) {
 				// find active and open tutorials
+				//console.log(tutorials, typeof tutorials, tutorials.length, tutorials instanceof Array;
 				for (var i=0; i<tutorials.length; i++) {
 					var tutorial = tutorials[i];
 					if (tutorial['cycle']['status'] == "Open") {
-						$scope.tutorial['open'] = $scope.user.tutorials[i];
+						$scope.tutorial['Open'] = $scope.user.tutorials[i];
 					} else if (tutorial['cycle']['status'] == "Active") {
-						$scope.tutorial['active'] = $scope.user.tutorials[i];
+						$scope.tutorial['Active'] = $scope.user.tutorials[i];
 					}
 				}
 			//}
@@ -35,7 +36,8 @@
 			$scope.list = function() {
 				var result = [];
 				for (var i=0; i<tutorials.length; i++) {
-					if (tutorials[i].id != $scope.tutorial.id && tutorials[i].students.length <= tutorials[i].max_students) {
+					if (/*tutorials[i].id != $scope.tutorial.id && */tutorials[i].students <= tutorials[i].max_students) {
+						console.log('test')
 						result.push(tutorials[i]);
 					}
 				}
@@ -90,4 +92,6 @@
 
 		}]);
 })();
+
+
 

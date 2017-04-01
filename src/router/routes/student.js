@@ -1,6 +1,6 @@
 var fs = require("fs");
 var multer = require('multer');
-var upload = multer({dest: 'uploads/'})
+var upload = multer({dest: __dirname + '/uploads/'})
 var parse = require('csv-parse');
 
 module.exports = (localApp, db) => {
@@ -19,6 +19,25 @@ module.exports = (localApp, db) => {
 
 			res.json(responseJSON);
 		});
+	});
+
+	localApp.get('/api/students/:id', (req, res) => {
+		const id = req.params.id.slice(0,-5);
+		if (id == 0) {
+			db.student.findAll().then((students) => {
+				var responseJSON = students.map((student) => {
+					return {
+						full_name: student.full_name,
+						first_name: student.first_name,
+						last_name: student.last_name,
+					}
+				});
+
+				res.json(responseJSON);
+			});
+		} else {
+			//get a specific student
+		}
 	});
 
 	localApp.delete('/api/students.json', (req, res) => {

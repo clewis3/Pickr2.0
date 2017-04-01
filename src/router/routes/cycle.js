@@ -15,7 +15,30 @@ module.exports = (localApp, db) => {
 					where: db.Sequelize.or({status: 'Active'},{status: 'Open'})		
 				}]
 			}).then((tutorials) => {
-				res.json( JSON.parse(JSON.stringify(tutorials)));
+				var responseJSON = tutorials.map((tutorial) => {
+					return {
+						id: tutorial.id,
+						name: tutorial.name,
+						cycle_id: tutorial.cycleId,
+						room_number: tutorial.room_number,
+						teacher_name: tutorial.teacher_name,
+						max_students: tutorial.max_students,
+						students: 0,
+						cycle: [tutorial.cycle].map((cycle) => {
+							return {
+								id: cycle.id,
+								name: cycle.name,
+								status: cycle.status
+							}
+						})
+					}
+
+				});
+
+
+				console.log(responseJSON);
+				//console.log(JSON.parse(JSON.stringify(tutorials)));
+				res.json(responseJSON);
 			});
 		} else {
 			db.tutorial.findAll( { where: { cycleId: [req.params.id] } } ).then((tutorials) => {        
