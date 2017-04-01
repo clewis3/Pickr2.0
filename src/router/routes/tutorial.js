@@ -6,50 +6,52 @@ module.exports = (localApp, db) => {
 
 	});
 
-    // Get students for a specific tutorial 
+    // Delete students from tutorial 
+    localApp.delete('/api/tutorials/:tutorial_id/students/:id', (req, res) =>{
+        const tutorial_id = req.params.tutorial_id;
+        const student_id = req.params.id.slice(0,-5);
+        db.student_tutorial.destroy({
+            where: {
+                tutorialId: tutorial_id,
+                studentId: student_id 
+            }
+        }).then(() =>{
+            res.json({'data': 'deleted student from tutorial'});
+        }).catch(function(errors) {
+            console.log(errors);
+        });
+    }); 
+
+    // Get students for a specific tutorial
     localApp.get('/api/tutorials/:tutorial_id/students.json', (req, res) =>{
         // console.log(req.params);
         const tutorialId = req.params.tutorial_id;
 
         // Find all studentId for selected tutorial 
-        db.student_tutorial.findAll({
-            attributes: ['studentId'],
-            where: {
-                tutorialId: tutorialId
-            }
-        }).then((students) => {
-
-            //get list of just studentId's 
-            var studentList = students.map((studentObj) => {
-                return {
-                    studentId: studentObj.studentId,
-                    student
-                }
-            });
-
-        // Get student attributes from list of studentId's
-            var studentAttributes = studentList.map((studentId) => {
-                const mappedId = studentId.studentId;
-
-                // match studentId to student 
-                db.student.findOne({
+        db.student.findAll({
+            include: [
+            {
+                model: db.tutorial,
                     where: {
-                        id: mappedId
+                        id: tutorialId
                     }
-                }).then((student) => {
-                    console.log(student.full_name);
-                    // return student data 
-                    return {
+                }
+            ]
+        }).then((student) => {
+            // console.log("student=", student);
+
+            var responseJSON = student.map((student) => {
+                return {
+                        student_id: student.student_id,
                         full_name: student.full_name,
                         first_name: student.first_name,
                         last_name: student.last_name,
                         grade_level: student.grade_level,
-                        id: student.student_id
-                    }
-                });
+                        id: student.id
+                }
             });
-        console.log(studentAttributes);
-        res.json(studentAttributes);
+            // console.log(responseJSON);
+            res.json(responseJSON);
         });
     });
 
