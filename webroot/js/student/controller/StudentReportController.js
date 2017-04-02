@@ -2,7 +2,7 @@
 	'use strict';
 
 	angular.module('Student')
-		.controller('StudentReportController', ['$scope', 'Page', 'StudentResource', function($scope, Page, StudentResource) {
+		.controller('StudentReportController', ['$scope', 'Page', '$mdDialog', 'StudentResource', function($scope, Page, $mdDialog,StudentResource) {
 			Page.title('Student Report');
 
 			//goes through all students and finds which students are signed up for a tutorial in the active cycle
@@ -20,6 +20,20 @@
 
 			$scope.sort = ["full_name", "last_name"];
 			$scope.reverse = false;
+
+
+
+			$scope.getUnassignedStudents= function(ev) {
+				$mdDialog.show({
+					controller: 'StudentUnassignedController',
+					templateUrl: '/js/student/view/report-dialog.html',
+					parent: angular.element(document.body),
+					targetEvent: ev
+				}).then(function(data) {
+					//nothing
+				});
+			};
+
 
 			$scope.newSort = function(type) {
 				if ($scope.sort[0] == type) {
