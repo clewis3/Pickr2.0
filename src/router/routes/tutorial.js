@@ -3,13 +3,71 @@ module.exports = (localApp, db) => {
 
     // Add students to tutorials
 	localApp.post('/api/tutorials/:tutorial_id/students/:id', (req, res) =>{
+        const tutorial_id = req.params.tutorial_id;
+        const student_id = req.params.id.slice(0,-5);
+        const isLock = req.body; // if isLock.lock == true, locked: 1
 
+        // Determine if locked (if admin or student added to tutorial)
+        if (isLock.lock == true) {
+            console.log(isLock.lock); 
+            locked = Number(1);
+        }
+        else {
+            locked = Number(0);
+        }
+
+        // Find all tutorials in open cycle to delete if necessary
+        // Find all tutorials within same cycle as tutorial_id 
+        db.tutorial.findAll({
+            include: [
+                {
+                    model: db.cycle,
+                    where: {status: 'Open'}
+                }]
+            }).then((openTutorials) => {
+                // console.log(openTutorials);
+                // Find any openTutorials in student_tutorials where studentId matches
+                openTutorials.map((openTutorial) => {
+                    db.student_tutorial.findOne({
+                        where: {
+                            tutorialId: openTutorial.id,
+                            studentId: student_id
+                        }
+                    }).then((deleteStudentTutorial) => {
+                        //delete student_tutorial if returns an object
+                        if (deleteStudentTutorial != null) {
+                            db.student_tutorial.destroy({
+                                where: {
+                                    tutorialId: deleteStudentTutorial.tutorialId,
+                                    studentId: student_id 
+                                }
+                            }).then(() =>{
+                                console.log({'data': 'deleted student from tutorial'});
+                            });
+                        };
+                        // Add student and tutorial to student_tutorials
+                        console.log("tutorial_id= ", tutorial_id);
+                        console.log("student_id= ", student_id);
+                        console.log("locked= ", locked);
+                        db.student_tutorial.create({
+                            tutorialId: tutorial_id,
+                            studentId: student_id,
+                            locked: locked
+                        }).then((newStudentTutorial) => {
+                            res.json(newStudentTutorial);
+                        }).catch(function(err) {
+                            console.log(err, locked);
+                        });
+                    });
+                });
+            });
 	});
 
     // Delete students from tutorial 
     localApp.delete('/api/tutorials/:tutorial_id/students/:id', (req, res) =>{
         const tutorial_id = req.params.tutorial_id;
         const student_id = req.params.id.slice(0,-5);
+        console.log(student_id);
         db.student_tutorial.destroy({
             where: {
                 tutorialId: tutorial_id,
@@ -21,6 +79,11 @@ module.exports = (localApp, db) => {
             console.log(errors);
         });
     }); 
+
+    // Student view: adding student to tutorial
+    localApp.post('/api/tutorials/:tutorial_id/students.json', (req, res) =>{
+
+    });
 
     // Get students for a specific tutorial
     localApp.get('/api/tutorials/:tutorial_id/students.json', (req, res) =>{

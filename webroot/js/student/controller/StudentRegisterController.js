@@ -8,6 +8,7 @@
 			$scope.selStudents = [];
 			$scope.selected = [];
 			$scope.students = StudentResource.query();
+			console.log($scope.students);
 
 			$scope.submit = function() {
 				if (!$scope.register.$invalid) {

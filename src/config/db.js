@@ -21,7 +21,7 @@ db.tutorial = require('../models/tutorial.js')(connection, Sequelize);
 db.cycle.hasMany(db.tutorial, {as: 'cycle_id'});
 db.tutorial.belongsTo(db.cycle);
 
-db.tutorial.belongsToMany(db.student, {through: db.student_tutorial} );
-db.student.belongsToMany(db.tutorial, {through: db.student_tutorial} );
+db.tutorial.belongsToMany(db.student, {through: db.student_tutorial, unique: false} );
+db.student.belongsToMany(db.tutorial, {through: db.student_tutorial, unique: false} );
 
 module.exports = db;
