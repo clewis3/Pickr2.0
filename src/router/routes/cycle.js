@@ -12,8 +12,13 @@ module.exports = (localApp, db) => {
 				include: [
 				{
 					model: db.cycle,
-					where: db.Sequelize.or({status: 'Active'},{status: 'Open'})		
-				}]
+					//where: db.Sequelize.or({status: 'Active'},{status: 'Open'})
+					where: {status: 'Open'}	
+				},
+				{
+					model:db.student
+				}],
+
 			}).then((tutorials) => {
 				var responseJSON = tutorials.map((tutorial) => {
 					return {
@@ -23,7 +28,7 @@ module.exports = (localApp, db) => {
 						room_number: tutorial.room_number,
 						teacher_name: tutorial.teacher_name,
 						max_students: tutorial.max_students,
-						students: 0,
+						students: tutorial.students.length,
 						cycle: [tutorial.cycle].map((cycle) => {
 							return {
 								id: cycle.id,
@@ -36,7 +41,7 @@ module.exports = (localApp, db) => {
 				});
 
 
-				console.log(responseJSON);
+				//console.log(responseJSON);
 				//console.log(JSON.parse(JSON.stringify(tutorials)));
 				res.json(responseJSON);
 			});
@@ -116,7 +121,8 @@ module.exports = (localApp, db) => {
 		db.cycle.destroy({
 			where: {
 				id: reqid
-			}
+			},
+			cascade: false
 		}).then((rowDeleted) => {
 			//still have to check if it might be more than one (if it deletes all the associated tutorials it is in)
 			console.log(rowDeleted);

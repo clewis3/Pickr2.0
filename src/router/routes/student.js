@@ -76,6 +76,103 @@ module.exports = (localApp, db) => {
 		});
 	});
 
+	//clicking on student report this is the get
+	//list with [{id: first_name: last_name grade_level: tutorials:{id: name: cycle_id: room number: teacher name: max_students: _matchingData: {Cycles: {id: name: status : } }, "_joinData:{tutorial_id, id: student_id: locked:}}, fullname: }]
+	//Table has student name(first name alphabetical), grade level, tutorial name, instructor, room #
+	localApp.get('/api/students/active.json', (req, res) => {
+		db.student.findAll({
+			include: [
+			{
+				model: db.tutorial,
+				include: [
+					{
+						model: db.cycle,
+						where: {
+							status: "Active"
+						}
+					}
+				]
+			}
+			]
+		}).then((student) => {
+			var responseJSON = student.map((student) => {
+				 //console.log( JSON.parse(JSON.stringify(student)) );
+				return {
+					full_name: student.full_name,
+					first_name: student.first_name,
+					last_name: student.last_name,
+					grade_level: student.grade_level,
+					id: student.student_id,
+					tutorial: student.tutorials.map((tutorial) => {
+					 //console.log( tutorial.room_number );
+						return {
+							id: tutorial.id,
+							name: tutorial.name,
+							cycle_id: tutorial.cycleId,
+							room_number: tutorial.room_number,
+							teacher_name: tutorial.teacher_name,
+							max_students: tutorial.max_students,
+							cycle: [tutorial.cycle].map((cycle) => {
+								//map only works for arrays
+								return {
+									id: cycle.id,
+									name: cycle.name,
+									status: cycle.status
+								}
+							})
+						}
+					})
+				}
+			});
+			//console.log(responseJSON[0].tutorial, responseJSON[0].tutorial[0].cycle);
+			res.json(responseJSON);
+		});
+		
+	});
+
+	localApp.get('/api/students/activeU.json', (req, res) => { ;
+		var notSignedUp = []
+		db.connection.query("SELECT * FROM students WHERE students.id NOT IN ( SELECT student_tutorials.studentId FROM student_tutorials )", { type: db.connection.QueryTypes.SELECT})
+		  	.then((ms) => {
+		  	var notSignedUp = ms.map((s) => {
+		  		return{
+		  			first_name: s.first_name,
+					last_name: s.last_name,
+					grade_level: s.grade_level,
+					id: s.student_id,
+		  		}
+		  	});
+
+		  	db.student.findAll({
+				include: [
+				{
+					model: db.tutorial,
+					include: [
+						{
+							model: db.cycle,
+							where: {status: {$ne: 'Active'}},
+						}
+					]
+				}
+				]
+			}).then((student) => {
+				var responseJSON = student.map((student) => {
+					return {
+						first_name: student.first_name,
+						last_name: student.last_name,
+						grade_level: student.grade_level,
+						id: student.student_id,
+					}
+				});
+				if (!!notSignedUp.length) {
+					res.json(responseJSON.concat(notSignedUp))
+				} else {
+					res.json(responseJSON);
+				}
+			});
+		})
+	});
+
 	localApp.get('/api/students/:id', (req, res) => {
 		const id = req.params.id.slice(0,-5);
 		if (id == 0) {
@@ -118,6 +215,11 @@ module.exports = (localApp, db) => {
 		});
 	});
 
+<<<<<<< HEAD
+=======
+
+
+>>>>>>> b27549f0db3410dcc3752020866e0074b0571db9
 	//login for users
 	localApp.post('/api/students/login.json', (req, res) => {
 		const first_name = req.body.student.first_name;
@@ -147,16 +249,25 @@ var devLoginCheck = (first_name, last_name,req, res) => {
 			where: {
 					first_name: first_name,
 					last_name: last_name
-				}
+				},
+				include: [{
+					model: db.tutorial,
+					include: [{
+						model: db.cycle
+					}]
+				}]
 		}).then((student) => {
+		console.log(JSON.parse(JSON.stringify(student)));
 		res.json({"student": { first_name: student.first_name,
 							   last_name: student.last_name,
-								id: student.student_id,
+								sid: student.student_id,
 								grade_level: student.grade_level,
-								fullname: student.fullname },
+								fullname: student.fullname,
+								id: student.id},
 				 "password": "n/a",
 				 "admin":"false",
-				 "type": "student"});
+				 "type": "student",
+				 "tutorials": student.tutorials});
 
 		});
 	}
@@ -193,17 +304,27 @@ var loginCheck = (first_name, last_name, password, req, res) =>{
 				where: {
 					first_name: first_name,
 					last_name: last_name
-				}
+				},
+				include: [{
+					model: db.tutorial,
+					include: [{
+						model: db.cycle
+					}]
+				}]
 			}).then((student) => {
+				console.log(JSON.parse(JSON.stringify(student)));
 				if (student.student_id == password) {
 					res.json({"student": { first_name: student.first_name,
 										   last_name: student.last_name,
-											id: student.student_id,
+											sid: student.student_id,
 											grade_level: student.grade_level,
-											fullname: student.fullname },
+											fullname: student.fullname,
+											id: student.id
+										},
 							 "password": "n/a",
 							 "admin":"false",
-							 "type": "student"});
+							 "type": "student",
+							 "tutorials": student.tutorials});
 				} else {
 					res.status(403).json({'message': 'Forbidden'})
 				}

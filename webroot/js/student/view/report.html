@@ -1,4 +1,7 @@
 <div layout="column">
+	<div layout="row" ng-if="admin()">
+		<md-button class="md-primary md-raised" ng-click="getUnassignedStudents($event)">Haven't signed up</md-button>
+	</div>
 	<table>
 		<thead>
 			<tr class="cursor">

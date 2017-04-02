@@ -53,7 +53,10 @@
 					return currentUser.type ? currentUser.type : "none";
 				},
 				userId: function() {
-					return currentUser.id;
+					return currentUser.student.sid;
+				},
+				Id: function() {
+					return currentUser.student.id;
 				},
 				user: function() {
 					return currentUser;

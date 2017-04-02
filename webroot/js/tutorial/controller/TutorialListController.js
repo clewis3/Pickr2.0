@@ -37,7 +37,6 @@
 				var result = [];
 				for (var i=0; i<tutorials.length; i++) {
 					if (/*tutorials[i].id != $scope.tutorial.id && */tutorials[i].students <= tutorials[i].max_students) {
-						// console.log('test')
 						result.push(tutorials[i]);
 					}
 				}
@@ -45,7 +44,7 @@
 			};
 
 			$scope.full = function(tut) {
-				return tut.max_students <= tut.students.length;
+				return tut.max_students <= tut.students;
 			};
 
 			$scope.select = function(id, ev) {
@@ -70,7 +69,7 @@
 						.cancel("Cancel")
 						.targetEvent(ev);
 					$mdDialog.show(conf).then(function() {
-						StudentTutorialResource.register({student_id:StudentFactory.userId(), tutorial_id:id}, function(data) {
+						StudentTutorialResource.register({student_id:StudentFactory.Id(), tutorial_id:id}, function(data) {
 							$scope.tutorial['open'] = tut;
 						});
 					}, function() {
