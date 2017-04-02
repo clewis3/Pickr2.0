@@ -21,29 +21,6 @@ module.exports = (localApp, db) => {
 		});
 	});
 
-	localApp.delete('/api/students.json', (req, res) => {
-		db.student.destroy({
-			where: {},
-			truncate: true
-		}).then(() =>{
-			res.json({'data': 'deleted all'});
-		})
-	});
-
-	//deletes a student, but dont know which one
-	localApp.delete('/api/students/:id', (req, res) => {
-		db.student.destroy({
-			where: {
-				student_id: req.params.id.slice(0,-5)
-			}
-		}).then((rowDeleted) => {
-			//it might be more than one, if it deletes all the associated tutorials it is in
-			if(rowDeleted >= 1) {
-				res.json({numOfRowsDeleted: rowDeleted}); //might want to change response
-			}
-		});
-	});
-
 	//clicking on student report this is the get
 	//list with [{id: first_name: last_name grade_level: tutorials:{id: name: cycle_id: room number: teacher name: max_students: _matchingData: {Cycles: {id: name: status : } }, "_joinData:{tutorial_id, id: student_id: locked:}}, fullname: }]
 	//Table has student name(first name alphabetical), grade level, tutorial name, instructor, room #
@@ -96,6 +73,113 @@ module.exports = (localApp, db) => {
 			res.json(responseJSON);
 		});
 	});
+
+	localApp.get('/api/students/activeU.json', (req, res) => {
+		console.log('fadfsdsdfs');
+		db.student.findAll({
+			include: [
+			{
+				model: db.tutorial,
+				include: [
+					{
+						model: db.cycle,
+						where: {status: {$ne: 'Active'}},
+					}
+				]
+			}
+			]
+		}).then((student) => {
+			var responseJSON = student.map((student) => {
+				return {
+					first_name: student.first_name,
+					last_name: student.last_name,
+					grade_level: student.grade_level,
+					id: student.student_id,
+
+				}
+			});
+			res.json(responseJSON);
+		});
+
+	});
+
+	localApp.get('/api/students/:id', (req, res) => {
+		const id = req.params.id.slice(0,-5);
+		if (id == 0) {
+			db.student.findAll().then((students) => {
+				var responseJSON = students.map((student) => {
+					return {
+						full_name: student.full_name,
+						first_name: student.first_name,
+						last_name: student.last_name,
+					}
+				});
+
+				res.json(responseJSON);
+			});
+		} else {
+			//get a specific student
+		}
+	});
+
+	localApp.delete('/api/students.json', (req, res) => {
+		db.student.destroy({
+			where: {},
+			truncate: true
+		}).then(() =>{
+			res.json({'data': 'deleted all'});
+		})
+	});
+
+	//deletes a student, but dont know which one
+	localApp.delete('/api/students/:id', (req, res) => {
+		db.student.destroy({
+			where: {
+				student_id: req.params.id.slice(0,-5)
+			}
+		}).then((rowDeleted) => {
+			//it might be more than one, if it deletes all the associated tutorials it is in
+			if(rowDeleted >= 1) {
+				res.json({numOfRowsDeleted: rowDeleted}); //might want to change response
+			}
+		});
+	});
+
+
+	// localApp.get('/api/students/open.json', (req, res) => {
+	// 	console.log('ghello');
+	// 	db.student.findAll({
+	// 		include: [
+	// 		{
+	// 			model: db.tutorial,
+	// 			include: [
+	// 				{
+	// 					model: db.cycle,
+	// 					where: {
+	// 						status: "Open"
+	// 					},
+	// 					required: true
+	// 				}
+	// 			]
+	// 		}
+	// 		]
+	// 	}).then((student) => {
+	// 		console.log(student);
+	// 		var responseJSON = student.map((student) => {
+	// 			return {
+	// 				first_name: student.first_name,
+	// 				last_name: student.last_name,
+	// 				grade_level: student.grade_level,
+	// 				id: student.student_id,
+
+	// 			}
+	// 		});
+	// 		res.json(responseJSON);
+	// 	});
+
+	// });
+
+
 
 	//login for users
 	localApp.post('/api/students/login.json', (req, res) => {
