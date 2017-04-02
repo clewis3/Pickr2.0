@@ -215,11 +215,6 @@ module.exports = (localApp, db) => {
 		});
 	});
 
-<<<<<<< HEAD
-=======
-
-
->>>>>>> b27549f0db3410dcc3752020866e0074b0571db9
 	//login for users
 	localApp.post('/api/students/login.json', (req, res) => {
 		const first_name = req.body.student.first_name;
