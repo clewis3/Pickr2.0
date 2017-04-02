@@ -11,17 +11,18 @@
 				"active": [],
 				"open": []
 			};
-			if (!!$scope.user.tutorials.length) {
+			//if (!!$scope.user.tutorials.length) {
 				// find active and open tutorials
-				for (var i=0; i<$scope.user.tutorials.length; i++) {
-					var tutorial = $scope.user.tutorials[i];
+				//console.log(tutorials, typeof tutorials, tutorials.length, tutorials instanceof Array;
+				for (var i=0; i<tutorials.length; i++) {
+					var tutorial = tutorials[i];
 					if (tutorial['cycle']['status'] == "Open") {
-						$scope.tutorial['open'] = $scope.user.tutorials[i];
+						$scope.tutorial['Open'] = $scope.user.tutorials[i];
 					} else if (tutorial['cycle']['status'] == "Active") {
-						$scope.tutorial['active'] = $scope.user.tutorials[i];
+						$scope.tutorial['Active'] = $scope.user.tutorials[i];
 					}
 				}
-			}
+			//}
 
 			var find = function(id) {
 				for (var i=0; i<tutorials.length; i++) {
@@ -35,7 +36,7 @@
 			$scope.list = function() {
 				var result = [];
 				for (var i=0; i<tutorials.length; i++) {
-					if (tutorials[i].id != $scope.tutorial.id && tutorials[i].students.length <= tutorials[i].max_students) {
+					if (/*tutorials[i].id != $scope.tutorial.id && */tutorials[i].students <= tutorials[i].max_students) {
 						result.push(tutorials[i]);
 					}
 				}
@@ -43,7 +44,7 @@
 			};
 
 			$scope.full = function(tut) {
-				return tut.max_students <= tut.students.length;
+				return tut.max_students <= tut.students;
 			};
 
 			$scope.select = function(id, ev) {
@@ -90,4 +91,6 @@
 
 		}]);
 })();
+
+
 

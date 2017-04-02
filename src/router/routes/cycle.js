@@ -5,21 +5,62 @@ module.exports = (localApp, db) => {
 	//view is tutorials/index
 	//We should refactor the count for each tutorial
 	localApp.get('/api/cycles/:id/tutorials.json', (req, res) => {
-		// console.log("req.params.id is ", req.params.id);
-		db.tutorial.findAll( { where: { cycleId: [req.params.id] } } ).then((tutorials) => {
-            
-            	var responseJSON = tutorials.map((tutorial) => {
-	                return {
-	                	id: tutorial.id,
-	                    name: tutorial.name,
-	                    room_number: tutorial.room_number,
-	                    teacher_name: tutorial.teacher_name,
-	                    max_students: tutorial.max_students
-	                }
-            	});
-            	res.json(responseJSON);
+		const cycle_id = req.params.id;
+
+		if (cycle_id == 0) {
+			db.tutorial.findAll({
+				include: [
+				{
+					model: db.cycle,
+					//where: db.Sequelize.or({status: 'Active'},{status: 'Open'})
+					where: {status: 'Open'}	
+				},
+				{
+					model:db.student
+				}],
+
+			}).then((tutorials) => {
+				var responseJSON = tutorials.map((tutorial) => {
+					return {
+						id: tutorial.id,
+						name: tutorial.name,
+						cycle_id: tutorial.cycleId,
+						room_number: tutorial.room_number,
+						teacher_name: tutorial.teacher_name,
+						max_students: tutorial.max_students,
+						students: tutorial.students.length,
+						cycle: [tutorial.cycle].map((cycle) => {
+							return {
+								id: cycle.id,
+								name: cycle.name,
+								status: cycle.status
+							}
+						})
+					}
+
+				});
+
+
+				//console.log(responseJSON);
+				//console.log(JSON.parse(JSON.stringify(tutorials)));
+				res.json(responseJSON);
+			});
+		} else {
+			db.tutorial.findAll( { where: { cycleId: [req.params.id] } } ).then((tutorials) => {        
+        	var responseJSON = tutorials.map((tutorial) => {
+                return {
+                	id: tutorial.id,
+                    name: tutorial.name,
+                    room_number: tutorial.room_number,
+                    teacher_name: tutorial.teacher_name,
+                    max_students: tutorial.max_students
+                }
         	});
+        	res.json(responseJSON);
+    	});
+		}
 	});
+
 
 	localApp.put('/api/cycles/:cycle_id/tutorials/:tutorial_id/.json', (req, res) => {
 

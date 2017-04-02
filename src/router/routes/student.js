@@ -1,6 +1,6 @@
 var fs = require("fs");
 var multer = require('multer');
-var upload = multer({dest: 'uploads/'})
+var upload = multer({dest: __dirname + '/uploads/'})
 var parse = require('csv-parse');
 
 module.exports = (localApp, db) => {
@@ -19,6 +19,25 @@ module.exports = (localApp, db) => {
 
 			res.json(responseJSON);
 		});
+	});
+
+	localApp.get('/api/students/:id', (req, res) => {
+		const id = req.params.id.slice(0,-5);
+		if (id == 0) {
+			db.student.findAll().then((students) => {
+				var responseJSON = students.map((student) => {
+					return {
+						full_name: student.full_name,
+						first_name: student.first_name,
+						last_name: student.last_name,
+					}
+				});
+
+				res.json(responseJSON);
+			});
+		} else {
+			//get a specific student
+		}
 	});
 
 	localApp.delete('/api/students.json', (req, res) => {
@@ -42,6 +61,12 @@ module.exports = (localApp, db) => {
 				res.json({numOfRowsDeleted: rowDeleted}); //might want to change response
 			}
 		});
+	});
+
+	localApp.post('/api/tutorials/:tutorialId/students/:studentId', (req, res) => {
+		const tutorialId = req.params.tutorialId;
+		const studentId = req.params.studentId.slice(0,-5);
+		console.log('got it', tutorialId, studentId)
 	});
 
 	//clicking on student report this is the get
@@ -127,8 +152,15 @@ var devLoginCheck = (first_name, last_name,req, res) => {
 			where: {
 					first_name: first_name,
 					last_name: last_name
-				}
+				},
+				include: [{
+					model: db.tutorial,
+					include: [{
+						model: db.cycle
+					}]
+				}]
 		}).then((student) => {
+		console.log(JSON.parse(JSON.stringify(student)));
 		res.json({"student": { first_name: student.first_name,
 							   last_name: student.last_name,
 								id: student.student_id,
@@ -136,7 +168,8 @@ var devLoginCheck = (first_name, last_name,req, res) => {
 								fullname: student.fullname },
 				 "password": "n/a",
 				 "admin":"false",
-				 "type": "student"});
+				 "type": "student",
+				 "tutorials": student.tutorials});
 
 		});
 	}
@@ -173,8 +206,15 @@ var loginCheck = (first_name, last_name, password, req, res) =>{
 				where: {
 					first_name: first_name,
 					last_name: last_name
-				}
+				},
+				include: [{
+					model: db.tutorial,
+					include: [{
+						model: db.cycle
+					}]
+				}]
 			}).then((student) => {
+				console.log(JSON.parse(JSON.stringify(student)));
 				if (student.student_id == password) {
 					res.json({"student": { first_name: student.first_name,
 										   last_name: student.last_name,
@@ -183,7 +223,8 @@ var loginCheck = (first_name, last_name, password, req, res) =>{
 											fullname: student.fullname },
 							 "password": "n/a",
 							 "admin":"false",
-							 "type": "student"});
+							 "type": "student",
+							 "tutorials": student.tutorials});
 				} else {
 					res.status(403).json({'message': 'Forbidden'})
 				}
