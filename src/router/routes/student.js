@@ -5,6 +5,60 @@ var parse = require('csv-parse');
 
 module.exports = (localApp, db) => {
 
+	//clicking on student report this is the get
+	//list with [{id: first_name: last_name grade_level: tutorials:{id: name: cycle_id: room number: teacher name: max_students: _matchingData: {Cycles: {id: name: status : } }, "_joinData:{tutorial_id, id: student_id: locked:}}, fullname: }]
+	//Table has student name(first name alphabetical), grade level, tutorial name, instructor, room #
+	localApp.get('/api/students/active.json', (req, res) => {
+		db.student.findAll({
+			include: [
+			{
+				model: db.tutorial,
+				include: [
+					{
+						model: db.cycle,
+						where: {
+							status: "Active"
+							//gets all students that have a tutorial in the active cycle
+						}
+					}
+				]
+			}
+			]
+		}).then((student) => {
+			var responseJSON = student.map((student) => {
+				 //console.log( JSON.parse(JSON.stringify(student)) );
+				return {
+					full_name: student.full_name,
+					first_name: student.first_name,
+					last_name: student.last_name,
+					grade_level: student.grade_level,
+					id: student.student_id,
+					tutorial: student.tutorials.map((tutorial) => {
+					 //console.log( tutorial.room_number );
+						return {
+							id: tutorial.id,
+							name: tutorial.name,
+							cycle_id: tutorial.cycleId,
+							room_number: tutorial.room_number,
+							teacher_name: tutorial.teacher_name,
+							max_students: tutorial.max_students,
+							cycle: [tutorial.cycle].map((cycle) => {
+								//map only works for arrays
+								return {
+									id: cycle.id,
+									name: cycle.name,
+									status: cycle.status
+								}
+							})
+						}
+					})
+				}
+			});
+			//console.log(responseJSON[0].tutorial, responseJSON[0].tutorial[0].cycle);
+			res.json(responseJSON);
+		});
+	});
+
 	localApp.get('/api/students.json', (req, res) => {
 		db.student.findAll().then((students) => {
 			var responseJSON = students.map((student) => {
@@ -13,7 +67,8 @@ module.exports = (localApp, db) => {
 					first_name: student.first_name,
 					last_name: student.last_name,
 					grade_level: student.grade_level,
-					id: student.student_id
+					id: student.id,
+					student_id: student.student_id
 				}
 			});
 
@@ -118,9 +173,6 @@ module.exports = (localApp, db) => {
 		})
 	});
 
-
-
-
 	localApp.get('/api/students/:id', (req, res) => {
 		const id = req.params.id.slice(0,-5);
 		if (id == 0) {
@@ -162,8 +214,6 @@ module.exports = (localApp, db) => {
 			}
 		});
 	});
-
-
 
 	//login for users
 	localApp.post('/api/students/login.json', (req, res) => {

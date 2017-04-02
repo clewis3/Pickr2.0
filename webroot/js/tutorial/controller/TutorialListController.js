@@ -79,6 +79,8 @@
 			};
 
 			$scope.registered = function(type) {
+				console.log(type);
+				console.log($scope.tutorial[type].id);
 				return !!$scope.tutorial[type].id;
 			};
 

@@ -117,7 +117,7 @@ module.exports = (localApp, db) => {
 	//deletes a cycle
 	localApp.delete('/api/cycles/:id', (req, res) => {
 		const reqid = req.params.id.slice(0,-5);
-		console.log(req.params.id.slice(0,-5));
+		// console.log(req.params.id.slice(0,-5));
 		db.cycle.destroy({
 			where: {
 				id: reqid
@@ -137,8 +137,8 @@ module.exports = (localApp, db) => {
 
   //updates a cycle
 	localApp.put('/api/cycles/:id', (req, res) => {
-		console.log(req.params.id.slice(0,-5));
-		console.log(req.body);
+		// console.log(req.params.id.slice(0,-5));
+		// console.log(req.body);
 		const reqid = req.params.id.slice(0,-5);
 		db.cycle.findOne({
 			where: {
