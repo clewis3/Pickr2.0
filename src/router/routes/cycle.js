@@ -46,14 +46,22 @@ module.exports = (localApp, db) => {
 				res.json(responseJSON);
 			});
 		} else {
-			db.tutorial.findAll( { where: { cycleId: [req.params.id] } } ).then((tutorials) => {        
+			db.tutorial.findAll({ 
+				where: { 
+					cycleId: [req.params.id] 
+				},
+				include: [{
+					model: db.student
+				}]
+			}).then((tutorials) => {        
         	var responseJSON = tutorials.map((tutorial) => {
                 return {
                 	id: tutorial.id,
                     name: tutorial.name,
                     room_number: tutorial.room_number,
                     teacher_name: tutorial.teacher_name,
-                    max_students: tutorial.max_students
+                    max_students: tutorial.max_students,
+                    students: tutorial.students.length
                 }
         	});
         	res.json(responseJSON);

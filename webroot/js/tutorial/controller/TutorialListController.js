@@ -8,16 +8,17 @@
 			var tutorials = TutorialCycleResource.query({cycle_id:0});
 			$scope.user = StudentFactory.user();
 			$scope.tutorial = {
-				"active": [],
-				"open": []
+				"Active": [],
+				"Open": []
 			};
 			//if (!!$scope.user.tutorials.length) {
 				// find active and open tutorials
 				//console.log(tutorials, typeof tutorials, tutorials.length, tutorials instanceof Array;
-				for (var i=0; i<tutorials.length; i++) {
-					var tutorial = tutorials[i];
+				for (var i=0; i<$scope.user.tutorials.length; i++) {
+					var tutorial = $scope.user.tutorials[i];
 					if (tutorial['cycle']['status'] == "Open") {
 						$scope.tutorial['Open'] = $scope.user.tutorials[i];
+						console.log($scope.tutorial);
 					} else if (tutorial['cycle']['status'] == "Active") {
 						$scope.tutorial['Active'] = $scope.user.tutorials[i];
 					}
@@ -70,7 +71,8 @@
 						.targetEvent(ev);
 					$mdDialog.show(conf).then(function() {
 						StudentTutorialResource.register({student_id:StudentFactory.Id(), tutorial_id:id}, function(data) {
-							$scope.tutorial['open'] = tut;
+							console.log(tut);
+							$scope.tutorial['Open'] = tut;
 						});
 					}, function() {
 						// do nothing
@@ -79,14 +81,12 @@
 			};
 
 			$scope.registered = function(type) {
-				console.log(type);
-				console.log($scope.tutorial[type].id);
 				return !!$scope.tutorial[type].id;
 			};
 
 			$scope.locked = function(type) {
 				if (!!$scope.tutorial[type].id) {
-					return !!$scope.tutorial[type]._joinData.locked;
+					return !!$scope.tutorial[type].student_tutorial.locked;
 				}
 				return false;
 			};

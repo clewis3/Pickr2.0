@@ -12,6 +12,7 @@ var db = {};
 db.Sequelize = Sequelize;
 db.connection = connection;
 
+
 db.student = require('../models/student.js')(connection, Sequelize);
 db.student_tutorial = require('../models/student_tutorial.js')(connection, Sequelize);
 db.cycle = require('../models/cycle.js')(connection, Sequelize);

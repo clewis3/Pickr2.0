@@ -4,7 +4,7 @@
 	<md-list>
 		<md-list-item class="md-3-line" ng-repeat="tutorial in tutorials" ng-click="navigate(tutorial.id)">
 			<div class="md-list-item-text">
-				<h3>{{tutorial.name}} <strong>{{tutorial.students.length}}/{{tutorial.max_students}}</strong></h3>
+				<h3>{{tutorial.name}} <strong>{{tutorial.students}}/{{tutorial.max_students}}</strong></h3>
 				<p><strong>Teacher:</strong> {{tutorial.teacher_name}}</p>
 				<p><strong>Room #:</strong> {{tutorial.room_number}}</p>
 			</div>
