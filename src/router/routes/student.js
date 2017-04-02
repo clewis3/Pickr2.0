@@ -75,34 +75,51 @@ module.exports = (localApp, db) => {
 		
 	});
 
-	localApp.get('/api/students/activeU.json', (req, res) => { 
-		console.log('fadfsdsdfs');
-		db.student.findAll({
-			include: [
-			{
-				model: db.tutorial,
+	localApp.get('/api/students/activeU.json', (req, res) => { ;
+		var notSignedUp = []
+		db.connection.query("SELECT * FROM students WHERE students.id NOT IN ( SELECT student_tutorials.studentId FROM student_tutorials )", { type: db.connection.QueryTypes.SELECT})
+		  	.then((ms) => {
+		  	var notSignedUp = ms.map((s) => {
+		  		return{
+		  			first_name: s.first_name,
+					last_name: s.last_name,
+					grade_level: s.grade_level,
+					id: s.student_id,
+		  		}
+		  	});
+
+		  	db.student.findAll({
 				include: [
-					{
-						model: db.cycle,
-						where: {status: {$ne: 'Active'}},
-					}
+				{
+					model: db.tutorial,
+					include: [
+						{
+							model: db.cycle,
+							where: {status: {$ne: 'Active'}},
+						}
+					]
+				}
 				]
-			}
-			]
-		}).then((student) => {
-			var responseJSON = student.map((student) => {
-				return {
-					first_name: student.first_name,
-					last_name: student.last_name,
-					grade_level: student.grade_level,
-					id: student.student_id,
-					
+			}).then((student) => {
+				var responseJSON = student.map((student) => {
+					return {
+						first_name: student.first_name,
+						last_name: student.last_name,
+						grade_level: student.grade_level,
+						id: student.student_id,
+					}
+				});
+				if (!!notSignedUp.length) {
+					res.json(responseJSON.concat(notSignedUp))
+				} else {
+					res.json(responseJSON);
 				}
 			});
-			res.json(responseJSON);
-		});
-
+		})
 	});
+
+
+
 
 	localApp.get('/api/students/:id', (req, res) => {
 		const id = req.params.id.slice(0,-5);
