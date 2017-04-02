@@ -28,7 +28,7 @@ module.exports = (localApp, db) => {
 						room_number: tutorial.room_number,
 						teacher_name: tutorial.teacher_name,
 						max_students: tutorial.max_students,
-						students: tutorial.students.length,
+						students: tutorial.students,
 						cycle: [tutorial.cycle].map((cycle) => {
 							return {
 								id: cycle.id,
