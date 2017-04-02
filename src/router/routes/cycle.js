@@ -121,7 +121,8 @@ module.exports = (localApp, db) => {
 		db.cycle.destroy({
 			where: {
 				id: reqid
-			}
+			},
+			cascade: false
 		}).then((rowDeleted) => {
 			//still have to check if it might be more than one (if it deletes all the associated tutorials it is in)
 			console.log(rowDeleted);

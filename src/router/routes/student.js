@@ -84,16 +84,12 @@ module.exports = (localApp, db) => {
 				include: [
 					{
 						model: db.cycle,
-						where: {
-							status: "Active"
-						},
-						required: false
+						where: {status: {$ne: 'Active'}},
 					}
 				]
 			}
 			]
 		}).then((student) => {
-			console.log(student);
 			var responseJSON = student.map((student) => {
 				return {
 					first_name: student.first_name,
