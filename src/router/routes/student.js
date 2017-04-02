@@ -80,7 +80,7 @@ module.exports = (localApp, db) => {
 		  	.then((ms) => {
 		  	var notSignedUp = ms.map((s) => {
 		  		return{
-		  			first_name: s.first_name,
+		  		first_name: s.first_name,
 					last_name: s.last_name,
 					grade_level: s.grade_level,
 					id: s.student_id,
