@@ -3,7 +3,6 @@ module.exports = (localApp, db) => {
 
     // Add students to tutorials
 	localApp.post('/api/tutorials/:tutorial_id/students/:id', (req, res) =>{
-<<<<<<< HEAD
         const tutorial_id = req.params.tutorial_id;
         const student_id = req.params.id.slice(0,-5);
         const isLock = req.body; // if isLock.lock == true, locked: 1
@@ -143,7 +142,6 @@ module.exports = (localApp, db) => {
 
     // Tutorial details - tutorialDetailController.js and tutorial/view/detail.html
     localApp.get('/api/cycles/:cycle_id/tutorials/:tutorial_id.json', (req, res) => {
-<<<<<<< HEAD
         const cycleId = req.params.cycle_id;
         const tutorialId = req.params.tutorial_id;
 
@@ -163,11 +161,6 @@ module.exports = (localApp, db) => {
             res.json(responseJSON);
         });
     });
-=======
-        
-        
-    })
->>>>>>> b27549f0db3410dcc3752020866e0074b0571db9
 
     // Add tutorials
     localApp.post('/api/cycles/:cycle_id/tutorials.json', (req, res) => {
