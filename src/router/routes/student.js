@@ -5,6 +5,60 @@ var parse = require('csv-parse');
 
 module.exports = (localApp, db) => {
 
+	//clicking on student report this is the get
+	//list with [{id: first_name: last_name grade_level: tutorials:{id: name: cycle_id: room number: teacher name: max_students: _matchingData: {Cycles: {id: name: status : } }, "_joinData:{tutorial_id, id: student_id: locked:}}, fullname: }]
+	//Table has student name(first name alphabetical), grade level, tutorial name, instructor, room #
+	localApp.get('/api/students/active.json', (req, res) => {
+		db.student.findAll({
+			include: [
+			{
+				model: db.tutorial,
+				include: [
+					{
+						model: db.cycle,
+						where: {
+							status: "Active"
+							//gets all students that have a tutorial in the active cycle
+						}
+					}
+				]
+			}
+			]
+		}).then((student) => {
+			var responseJSON = student.map((student) => {
+				 //console.log( JSON.parse(JSON.stringify(student)) );
+				return {
+					full_name: student.full_name,
+					first_name: student.first_name,
+					last_name: student.last_name,
+					grade_level: student.grade_level,
+					id: student.student_id,
+					tutorial: student.tutorials.map((tutorial) => {
+					 //console.log( tutorial.room_number );
+						return {
+							id: tutorial.id,
+							name: tutorial.name,
+							cycle_id: tutorial.cycleId,
+							room_number: tutorial.room_number,
+							teacher_name: tutorial.teacher_name,
+							max_students: tutorial.max_students,
+							cycle: [tutorial.cycle].map((cycle) => {
+								//map only works for arrays
+								return {
+									id: cycle.id,
+									name: cycle.name,
+									status: cycle.status
+								}
+							})
+						}
+					})
+				}
+			});
+			//console.log(responseJSON[0].tutorial, responseJSON[0].tutorial[0].cycle);
+			res.json(responseJSON);
+		});
+	});
+
 	localApp.get('/api/students.json', (req, res) => {
 		db.student.findAll().then((students) => {
 			var responseJSON = students.map((student) => {
@@ -13,7 +67,8 @@ module.exports = (localApp, db) => {
 					first_name: student.first_name,
 					last_name: student.last_name,
 					grade_level: student.grade_level,
-					id: student.student_id
+					id: student.id,
+					student_id: student.student_id
 				}
 			});
 
@@ -69,13 +124,19 @@ module.exports = (localApp, db) => {
 					})
 				}
 			});
-			//console.log(responseJSON[0].tutorial, responseJSON[0].tutorial[0].cycle);
 			res.json(responseJSON);
 		});
 	});
 
-	localApp.get('/api/students/activeU.json', (req, res) => { ;
-		var notSignedUp = []
+
+	localApp.get('/api/students/activeU.json', (req, res) => { 
+
+		// db.connection.query("SELECT * FROM students LEFT JOIN student_tutorials ON students.id = student_tutorials.studentId LEFT JOIN tutorials ON student_tutorials.tutorialId = tutorials.id LEFT JOIN cycles ON tutorials.cycleId = cycles.id WHERE cycles.status != 'Active' AND  students.student_id NOT IN (SELECT students.student_id FROM students LEFT JOIN student_tutorials ON students.id = student_tutorials.studentId LEFT JOIN tutorials ON student_tutorials.tutorialId = tutorials.id LEFT JOIN cycles ON tutorials.cycleId = cycles.id WHERE cycles.status = 'Active') GROUP BY students.student_id", { type: db.connection.QueryTypes.SELECT})
+		// .then((ms) => {
+		// 		console.log(JSON.parse(JSON.stringify(ms)));
+		//  });
+
+
 		db.connection.query("SELECT * FROM students WHERE students.id NOT IN ( SELECT student_tutorials.studentId FROM student_tutorials )", { type: db.connection.QueryTypes.SELECT})
 		  	.then((ms) => {
 		  	var notSignedUp = ms.map((s) => {
@@ -87,19 +148,11 @@ module.exports = (localApp, db) => {
 		  		}
 		  	});
 
-		  	db.student.findAll({
-				include: [
-				{
-					model: db.tutorial,
-					include: [
-						{
-							model: db.cycle,
-							where: {status: {$ne: 'Active'}},
-						}
-					]
-				}
-				]
-			}).then((student) => {
+
+
+
+		  	db.connection.query("SELECT * FROM students LEFT JOIN student_tutorials ON students.id = student_tutorials.studentId LEFT JOIN tutorials ON student_tutorials.tutorialId = tutorials.id LEFT JOIN cycles ON tutorials.cycleId = cycles.id WHERE cycles.status != 'Active' AND  students.student_id NOT IN (SELECT students.student_id FROM students LEFT JOIN student_tutorials ON students.id = student_tutorials.studentId LEFT JOIN tutorials ON student_tutorials.tutorialId = tutorials.id LEFT JOIN cycles ON tutorials.cycleId = cycles.id WHERE cycles.status = 'Active') GROUP BY students.student_id", { type: db.connection.QueryTypes.SELECT})
+			.then((student) => {
 				var responseJSON = student.map((student) => {
 					return {
 						first_name: student.first_name,
@@ -113,12 +166,10 @@ module.exports = (localApp, db) => {
 				} else {
 					res.json(responseJSON);
 				}
-			});
+
+			 });
 		})
 	});
-
-
-
 
 	localApp.get('/api/students/:id', (req, res) => {
 		const id = req.params.id.slice(0,-5);
@@ -162,6 +213,7 @@ module.exports = (localApp, db) => {
 		});
 	});
 
+<<<<<<< HEAD
 
 	// localApp.get('/api/students/open.json', (req, res) => {
 	// 	console.log('ghello');
@@ -198,6 +250,8 @@ module.exports = (localApp, db) => {
 
 
 
+=======
+>>>>>>> 0feca4f8f7e2d19a300f526ee4ac036c63016b9e
 	//login for users
 	localApp.post('/api/students/login.json', (req, res) => {
 		const first_name = req.body.student.first_name;
@@ -231,9 +285,10 @@ var devLoginCheck = (first_name, last_name,req, res) => {
 		}).then((student) => {
 		res.json({"student": { first_name: student.first_name,
 							   last_name: student.last_name,
-								id: student.student_id,
+								sid: student.student_id,
 								grade_level: student.grade_level,
-								fullname: student.fullname },
+								fullname: student.fullname,
+								id: student.id},
 				 "password": "n/a",
 				 "admin":"false",
 				 "type": "student"});
@@ -278,9 +333,11 @@ var loginCheck = (first_name, last_name, password, req, res) =>{
 				if (student.student_id == password) {
 					res.json({"student": { first_name: student.first_name,
 										   last_name: student.last_name,
-											id: student.student_id,
+											sid: student.student_id,
 											grade_level: student.grade_level,
-											fullname: student.fullname },
+											fullname: student.fullname,
+											id: student.id
+										},
 							 "password": "n/a",
 							 "admin":"false",
 							 "type": "student"});

@@ -47,8 +47,6 @@
 
 			$scope.navigate = function(id) {
 				$location.path("/admin/cycles/"+$scope.cycle.id+"/tutorials/"+id);
-				console.log("$scope.cycle.id: ", $scope.cycle);
-				console.log("tutorial id: ", id);
 			};
 	
 

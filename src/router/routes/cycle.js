@@ -46,14 +46,22 @@ module.exports = (localApp, db) => {
 				res.json(responseJSON);
 			});
 		} else {
-			db.tutorial.findAll( { where: { cycleId: [req.params.id] } } ).then((tutorials) => {        
+			db.tutorial.findAll({ 
+				where: { 
+					cycleId: [req.params.id] 
+				},
+				include: [{
+					model: db.student
+				}]
+			}).then((tutorials) => {        
         	var responseJSON = tutorials.map((tutorial) => {
                 return {
                 	id: tutorial.id,
                     name: tutorial.name,
                     room_number: tutorial.room_number,
                     teacher_name: tutorial.teacher_name,
-                    max_students: tutorial.max_students
+                    max_students: tutorial.max_students,
+                    students: tutorial.students.length
                 }
         	});
         	res.json(responseJSON);
@@ -117,7 +125,7 @@ module.exports = (localApp, db) => {
 	//deletes a cycle
 	localApp.delete('/api/cycles/:id', (req, res) => {
 		const reqid = req.params.id.slice(0,-5);
-		console.log(req.params.id.slice(0,-5));
+		// console.log(req.params.id.slice(0,-5));
 		db.cycle.destroy({
 			where: {
 				id: reqid
@@ -137,8 +145,8 @@ module.exports = (localApp, db) => {
 
   //updates a cycle
 	localApp.put('/api/cycles/:id', (req, res) => {
-		console.log(req.params.id.slice(0,-5));
-		console.log(req.body);
+		// console.log(req.params.id.slice(0,-5));
+		// console.log(req.body);
 		const reqid = req.params.id.slice(0,-5);
 		db.cycle.findOne({
 			where: {
