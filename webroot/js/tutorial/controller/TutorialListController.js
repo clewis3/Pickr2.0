@@ -69,7 +69,7 @@
 						.cancel("Cancel")
 						.targetEvent(ev);
 					$mdDialog.show(conf).then(function() {
-						StudentTutorialResource.register({student_id:StudentFactory.userId(), tutorial_id:id}, function(data) {
+						StudentTutorialResource.register({student_id:StudentFactory.Id(), tutorial_id:id}, function(data) {
 							$scope.tutorial['open'] = tut;
 						});
 					}, function() {

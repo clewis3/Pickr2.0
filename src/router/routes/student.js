@@ -164,40 +164,6 @@ module.exports = (localApp, db) => {
 	});
 
 
-	// localApp.get('/api/students/open.json', (req, res) => {
-	// 	console.log('ghello');
-	// 	db.student.findAll({
-	// 		include: [
-	// 		{
-	// 			model: db.tutorial,
-	// 			include: [
-	// 				{
-	// 					model: db.cycle,
-	// 					where: {
-	// 						status: "Open"
-	// 					},
-	// 					required: true
-	// 				}
-	// 			]
-	// 		}
-	// 		]
-	// 	}).then((student) => {
-	// 		console.log(student);
-	// 		var responseJSON = student.map((student) => {
-	// 			return {
-	// 				first_name: student.first_name,
-	// 				last_name: student.last_name,
-	// 				grade_level: student.grade_level,
-	// 				id: student.student_id,
-					
-	// 			}
-	// 		});
-	// 		res.json(responseJSON);
-	// 	});
-
-	// });
-
-
 
 	//login for users
 	localApp.post('/api/students/login.json', (req, res) => {
@@ -239,9 +205,10 @@ var devLoginCheck = (first_name, last_name,req, res) => {
 		console.log(JSON.parse(JSON.stringify(student)));
 		res.json({"student": { first_name: student.first_name,
 							   last_name: student.last_name,
-								id: student.student_id,
+								sid: student.student_id,
 								grade_level: student.grade_level,
-								fullname: student.fullname },
+								fullname: student.fullname,
+								id: student.id},
 				 "password": "n/a",
 				 "admin":"false",
 				 "type": "student",
@@ -294,9 +261,11 @@ var loginCheck = (first_name, last_name, password, req, res) =>{
 				if (student.student_id == password) {
 					res.json({"student": { first_name: student.first_name,
 										   last_name: student.last_name,
-											id: student.student_id,
+											sid: student.student_id,
 											grade_level: student.grade_level,
-											fullname: student.fullname },
+											fullname: student.fullname,
+											id: student.id
+										},
 							 "password": "n/a",
 							 "admin":"false",
 							 "type": "student",

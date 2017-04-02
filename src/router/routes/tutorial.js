@@ -1,8 +1,7 @@
 module.exports = (localApp, db) => {
 
 	localApp.post('/api/tutorials/:tutorial_id/students/:id', (req, res) =>{
-        const tutorialId = req.params.tutorialId;
-        const studentId = req.params.studentId.slice(0,-5);
+        
 
 	});
 
@@ -11,9 +10,7 @@ module.exports = (localApp, db) => {
 
     // Tutorial details - tutorialDetailController.js and tutorial/view/detail.html
     localApp.get('/api/cycles/:cycle_id/tutorials/:tutorial_id.json', (req, res) => {
-        console.log(req.params);
-        console.log("___________________________");
-        console.log(req);
+        
         
     })
 
