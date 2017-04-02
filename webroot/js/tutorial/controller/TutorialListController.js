@@ -37,7 +37,7 @@
 				var result = [];
 				for (var i=0; i<tutorials.length; i++) {
 					if (/*tutorials[i].id != $scope.tutorial.id && */tutorials[i].students <= tutorials[i].max_students) {
-						console.log('test')
+						// console.log('test')
 						result.push(tutorials[i]);
 					}
 				}
@@ -80,6 +80,8 @@
 			};
 
 			$scope.registered = function(type) {
+				console.log(type);
+				console.log($scope.tutorial[type].id);
 				return !!$scope.tutorial[type].id;
 			};
 

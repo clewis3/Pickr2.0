@@ -10,57 +10,76 @@ module.exports = (localApp, db) => {
         // Determine if locked (if admin or student added to tutorial)
         if (isLock.lock == true) {
             console.log(isLock.lock); 
-            locked = Number(1);
+            // Admin
+            currLocked = Number(1);
         }
         else {
-            locked = Number(0);
+            // Student
+            currLocked = Number(0);
         }
 
-        // Find all tutorials in open cycle to delete if necessary
-        // Find all tutorials within same cycle as tutorial_id 
-        db.tutorial.findAll({
-            include: [
-                {
-                    model: db.cycle,
-                    where: {status: 'Open'}
-                }]
-            }).then((openTutorials) => {
-                // console.log(openTutorials);
-                // Find any openTutorials in student_tutorials where studentId matches
-                openTutorials.map((openTutorial) => {
-                    db.student_tutorial.findOne({
-                        where: {
-                            tutorialId: openTutorial.id,
-                            studentId: student_id
-                        }
-                    }).then((deleteStudentTutorial) => {
-                        //delete student_tutorial if returns an object
-                        if (deleteStudentTutorial != null) {
-                            db.student_tutorial.destroy({
-                                where: {
-                                    tutorialId: deleteStudentTutorial.tutorialId,
-                                    studentId: student_id 
-                                }
-                            }).then(() =>{
-                                console.log({'data': 'deleted student from tutorial'});
-                            });
-                        };
-                        // Add student and tutorial to student_tutorials
-                        console.log("tutorial_id= ", tutorial_id);
-                        console.log("student_id= ", student_id);
-                        console.log("locked= ", locked);
-                        db.student_tutorial.create({
-                            tutorialId: tutorial_id,
-                            studentId: student_id,
-                            locked: locked
-                        }).then((newStudentTutorial) => {
-                            res.json(newStudentTutorial);
-                        }).catch(function(err) {
-                            console.log(err, locked);
+        // Find all tutorials in origin cycle to delete if necessary
+        db.tutorial.findOne({
+            where: {    
+                id: tutorial_id,
+            }
+        }).then((tutorial) => {
+            currCycle = tutorial.cycleId;
+            console.log("currCycle= ", currCycle);
+            // Find all tutorials in origin cycle to delete if necessary
+            // Find all tutorials within same cycle as tutorial_id 
+            db.tutorial.findAll({
+                include: [
+                    {
+                        model: db.cycle,
+                        where: {id: currCycle}
+                    }]
+                }).then((openTutorials) => {
+                    // console.log(openTutorials);
+                    // Find any openTutorials in student_tutorials where studentId matches
+                    openTutorials.map((openTutorial) => {
+                        db.student_tutorial.findOne({
+                            where: {
+                                tutorialId: openTutorial.id,
+                                studentId: student_id
+                            }
+                        }).then((deleteStudentTutorial) => {
+                            if (deleteStudentTutorial != null) {
+                                //delete student_tutorial if returns an object   
+                                if (!(deleteStudentTutorial.locked!=1 && currLocked)) { 
+                                    db.student_tutorial.destroy({
+                                        where: {
+                                            tutorialId: deleteStudentTutorial.tutorialId,
+                                            studentId: student_id 
+                                        }
+                                    }).then(() =>{
+                                        console.log({'data': 'deleted student from tutorial'});
+                                    });
+                                };
+                            }
+                            else if (deleteStudentTutorial==null || (!(deleteStudentTutorial.locked!=1 && currLocked))) {
+                                // Add student and tutorial to student_tutorials
+                                console.log("tutorial_id= ", tutorial_id);
+                                console.log("student_id= ", student_id);
+                                console.log("locked= ", currLocked);
+                                db.student_tutorial.create({
+                                    tutorialId: tutorial_id,
+                                    studentId: student_id,
+                                    locked: currLocked
+                                }).then((newStudentTutorial) => {
+                                    res.json(newStudentTutorial);
+                                }).catch(function(err) {
+                                    console.log(err, currLocked);
+                                }); 
+                            }
+                            else {
+                                res.json({data: "You are locked into another tutorial."})
+                            }
                         });
                     });
                 });
             });
+
 	});
 
     // Delete students from tutorial 
@@ -82,7 +101,7 @@ module.exports = (localApp, db) => {
 
     // Student view: adding student to tutorial
     localApp.post('/api/tutorials/:tutorial_id/students.json', (req, res) =>{
-
+        res.json({'data':'this route exists'});
     });
 
     // Get students for a specific tutorial
