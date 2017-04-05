@@ -5,6 +5,21 @@ var parse = require('csv-parse');
 
 module.exports = (localApp, db) => {
 
+	//deletes a student, but dont know which one
+	localApp.delete('/api/students/:id', (req, res) => {
+		console.log("req.params etc. ", req.params.id.slice(0,-5));
+		db.student.destroy({
+			where: {
+				id: req.params.id.slice(0,-5)
+			}
+		}).then((rowDeleted) => {
+			//it might be more than one, if it deletes all the associated tutorials it is in
+			if(rowDeleted >= 1) {
+				res.json({numOfRowsDeleted: rowDeleted}); //might want to change response
+			}
+		});
+	});
+
 	//clicking on student report this is the get
 	//list with [{id: first_name: last_name grade_level: tutorials:{id: name: cycle_id: room number: teacher name: max_students: _matchingData: {Cycles: {id: name: status : } }, "_joinData:{tutorial_id, id: student_id: locked:}}, fullname: }]
 	//Table has student name(first name alphabetical), grade level, tutorial name, instructor, room #
@@ -76,60 +91,6 @@ module.exports = (localApp, db) => {
 		});
 	});
 
-	//clicking on student report this is the get
-	//list with [{id: first_name: last_name grade_level: tutorials:{id: name: cycle_id: room number: teacher name: max_students: _matchingData: {Cycles: {id: name: status : } }, "_joinData:{tutorial_id, id: student_id: locked:}}, fullname: }]
-	//Table has student name(first name alphabetical), grade level, tutorial name, instructor, room #
-	localApp.get('/api/students/active.json', (req, res) => {
-		db.student.findAll({
-			include: [
-			{
-				model: db.tutorial,
-				include: [
-					{
-						model: db.cycle,
-						where: {
-							status: "Active"
-						}
-					}
-				]
-			}
-			]
-		}).then((student) => {
-			var responseJSON = student.map((student) => {
-				 //console.log( JSON.parse(JSON.stringify(student)) );
-				return {
-					full_name: student.full_name,
-					first_name: student.first_name,
-					last_name: student.last_name,
-					grade_level: student.grade_level,
-					id: student.student_id,
-					tutorial: student.tutorials.map((tutorial) => {
-					 //console.log( tutorial.room_number );
-						return {
-							id: tutorial.id,
-							name: tutorial.name,
-							cycle_id: tutorial.cycleId,
-							room_number: tutorial.room_number,
-							teacher_name: tutorial.teacher_name,
-							max_students: tutorial.max_students,
-							cycle: [tutorial.cycle].map((cycle) => {
-								//map only works for arrays
-								return {
-									id: cycle.id,
-									name: cycle.name,
-									status: cycle.status
-								}
-							})
-						}
-					})
-				}
-			});
-			res.json(responseJSON);
-		});
-		
-	});
-
-
 	localApp.get('/api/students/activeU.json', (req, res) => { 
 
 		// db.connection.query("SELECT * FROM students LEFT JOIN student_tutorials ON students.id = student_tutorials.studentId LEFT JOIN tutorials ON student_tutorials.tutorialId = tutorials.id LEFT JOIN cycles ON tutorials.cycleId = cycles.id WHERE cycles.status != 'Active' AND  students.student_id NOT IN (SELECT students.student_id FROM students LEFT JOIN student_tutorials ON students.id = student_tutorials.studentId LEFT JOIN tutorials ON student_tutorials.tutorialId = tutorials.id LEFT JOIN cycles ON tutorials.cycleId = cycles.id WHERE cycles.status = 'Active') GROUP BY students.student_id", { type: db.connection.QueryTypes.SELECT})
@@ -200,28 +161,14 @@ module.exports = (localApp, db) => {
 		})
 	});
 
-	//deletes a student, but dont know which one
-	localApp.delete('/api/students/:id', (req, res) => {
-		db.student.destroy({
-			where: {
-				student_id: req.params.id.slice(0,-5)
-			}
-		}).then((rowDeleted) => {
-			//it might be more than one, if it deletes all the associated tutorials it is in
-			if(rowDeleted >= 1) {
-				res.json({numOfRowsDeleted: rowDeleted}); //might want to change response
-			}
-		});
-	});
-
 	//login for users
 	localApp.post('/api/students/login.json', (req, res) => {
 		const first_name = req.body.student.first_name;
 		const last_name = req.body.student.last_name;
 		const password = req.body.password;
 		//add something for multi threading here
-		//loginCheck(first_name, last_name, password, req, res);
-		devLoginCheck(first_name,last_name,req,res);
+		loginCheck(first_name, last_name, password, req, res);
+		// devLoginCheck(first_name,last_name,req,res);
 	});
 
 	//importing list
