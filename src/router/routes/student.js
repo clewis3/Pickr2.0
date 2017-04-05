@@ -129,7 +129,7 @@ module.exports = (localApp, db) => {
 	});
 
 
-	localApp.get('/api/students/activeU.json', (req, res) => { 
+	localApp.get('/api/students/activeU.json', (req, res) => {
 
 		// db.connection.query("SELECT * FROM students LEFT JOIN student_tutorials ON students.id = student_tutorials.studentId LEFT JOIN tutorials ON student_tutorials.tutorialId = tutorials.id LEFT JOIN cycles ON tutorials.cycleId = cycles.id WHERE cycles.status != 'Active' AND  students.student_id NOT IN (SELECT students.student_id FROM students LEFT JOIN student_tutorials ON students.id = student_tutorials.studentId LEFT JOIN tutorials ON student_tutorials.tutorialId = tutorials.id LEFT JOIN cycles ON tutorials.cycleId = cycles.id WHERE cycles.status = 'Active') GROUP BY students.student_id", { type: db.connection.QueryTypes.SELECT})
 		// .then((ms) => {
@@ -213,45 +213,7 @@ module.exports = (localApp, db) => {
 		});
 	});
 
-<<<<<<< HEAD
 
-	// localApp.get('/api/students/open.json', (req, res) => {
-	// 	console.log('ghello');
-	// 	db.student.findAll({
-	// 		include: [
-	// 		{
-	// 			model: db.tutorial,
-	// 			include: [
-	// 				{
-	// 					model: db.cycle,
-	// 					where: {
-	// 						status: "Open"
-	// 					},
-	// 					required: true
-	// 				}
-	// 			]
-	// 		}
-	// 		]
-	// 	}).then((student) => {
-	// 		console.log(student);
-	// 		var responseJSON = student.map((student) => {
-	// 			return {
-	// 				first_name: student.first_name,
-	// 				last_name: student.last_name,
-	// 				grade_level: student.grade_level,
-	// 				id: student.student_id,
-
-	// 			}
-	// 		});
-	// 		res.json(responseJSON);
-	// 	});
-
-	// });
-
-
-
-=======
->>>>>>> 0feca4f8f7e2d19a300f526ee4ac036c63016b9e
 	//login for users
 	localApp.post('/api/students/login.json', (req, res) => {
 		const first_name = req.body.student.first_name;
