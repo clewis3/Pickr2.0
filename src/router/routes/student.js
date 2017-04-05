@@ -67,8 +67,8 @@ module.exports = (localApp, db) => {
 					first_name: student.first_name,
 					last_name: student.last_name,
 					grade_level: student.grade_level,
-					id: student.id,
-					student_id: student.student_id
+					id: student.student_id
+					//student_id: student.student_id
 				}
 			});
 
