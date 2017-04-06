@@ -13,7 +13,7 @@ module.exports = (localApp, db) => {
 				{
 					model: db.cycle,
 					//where: db.Sequelize.or({status: 'Active'},{status: 'Open'})
-					where: {status: 'Open'}	
+					where: {status: 'Open'}
 				},
 				{
 					model:db.student
@@ -28,7 +28,7 @@ module.exports = (localApp, db) => {
 						room_number: tutorial.room_number,
 						teacher_name: tutorial.teacher_name,
 						max_students: tutorial.max_students,
-						students: tutorial.students,
+						students: tutorial.students.length,
 						cycle: [tutorial.cycle].map((cycle) => {
 							return {
 								id: cycle.id,
@@ -46,22 +46,22 @@ module.exports = (localApp, db) => {
 				res.json(responseJSON);
 			});
 		} else {
-			db.tutorial.findAll({ 
-				where: { 
-					cycleId: [req.params.id] 
+			db.tutorial.findAll({
+				where: {
+					cycleId: [req.params.id]
 				},
 				include: [{
 					model: db.student
 				}]
-			}).then((tutorials) => {        
+			}).then((tutorials) => {
         	var responseJSON = tutorials.map((tutorial) => {
                 return {
                 	id: tutorial.id,
-                    name: tutorial.name,
-                    room_number: tutorial.room_number,
-                    teacher_name: tutorial.teacher_name,
-                    max_students: tutorial.max_students,
-                    students: tutorial.students.length
+                   name: tutorial.name,
+                   room_number: tutorial.room_number,
+                   teacher_name: tutorial.teacher_name,
+                   max_students: tutorial.max_students,
+                   students: tutorial.students.length
                 }
         	});
         	res.json(responseJSON);
@@ -72,9 +72,9 @@ module.exports = (localApp, db) => {
 
 	localApp.put('/api/cycles/:cycle_id/tutorials/:tutorial_id/.json', (req, res) => {
 
-	}); 
+	});
 
-	//gets all the cycles 
+	//gets all the cycles
 	localApp.get('/api/cycles.json', (req, res) =>{
 		db.cycle.findAll().then((cycles) => {
 
@@ -90,7 +90,7 @@ module.exports = (localApp, db) => {
 		});
 	});
 
-	// gets tutorials for a cycle id 
+	// gets tutorials for a cycle id
 	localApp.get('/api/cycles/:id', (req, res) => {
 		const reqid = req.params.id.slice(0,-5);
 		db.cycle.findOne({

@@ -82,7 +82,7 @@ module.exports = (localApp, db) => {
 					first_name: student.first_name,
 					last_name: student.last_name,
 					grade_level: student.grade_level,
-					id: student.id
+					id: student.id,
 					student_id: student.student_id
 				}
 			});
@@ -178,8 +178,8 @@ module.exports = (localApp, db) => {
 		const last_name = req.body.student.last_name;
 		const password = req.body.password;
 		//add something for multi threading here
-		loginCheck(first_name, last_name, password, req, res);
-		// devLoginCheck(first_name,last_name,req,res);
+		//loginCheck(first_name, last_name, password, req, res);
+		devLoginCheck(first_name,last_name,req,res);
 	});
 
 	//importing list
@@ -201,17 +201,24 @@ var devLoginCheck = (first_name, last_name,req, res) => {
 			where: {
 					first_name: first_name,
 					last_name: last_name
-				}
+				},
+				include: [{
+					model: db.tutorial,
+					include: [{
+						model: db.cycle
+					}]
+				}]
 		}).then((student) => {
 		res.json({"student": { first_name: student.first_name,
-							   last_name: student.last_name,
+							  last_name: student.last_name,
 								sid: student.student_id,
 								grade_level: student.grade_level,
 								fullname: student.fullname,
 								id: student.id},
 				 "password": "n/a",
 				 "admin":"false",
-				 "type": "student"});
+				 "type": "student",
+				 "tutorials": student.tutorials});
 
 		});
 	}
