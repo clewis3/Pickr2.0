@@ -9,7 +9,7 @@
 			<div class="md-list-item-text">
 				<h3>{{student.full_name}}</h3>
 				<h4><strong>Grade:</strong> {{student.grade_level}}</h4>
-				<p><strong>Id:</strong> {{student.id}}</p>
+				<p><strong>Id:</strong> {{student.student_id}}</p>
 			</div>
 			<md-icon class="md-secondary md-warn cursor" style="margin-top:0px" aria-label="Delete student" md-svg-icon="close" ng-click="delete($index, $event)" ng-if="admin()"><md-tooltip>Delete Student</md-tooltip></md-icon>
 			<md-divider ng-if="!$last"></md-divider>
