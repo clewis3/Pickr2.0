@@ -94,12 +94,6 @@ module.exports = (localApp, db) => {
 
 	localApp.get('/api/students/activeU.json', (req, res) => {
 
-		// db.connection.query("SELECT * FROM students LEFT JOIN student_tutorials ON students.id = student_tutorials.studentId LEFT JOIN tutorials ON student_tutorials.tutorialId = tutorials.id LEFT JOIN cycles ON tutorials.cycleId = cycles.id WHERE cycles.status != 'Active' AND  students.student_id NOT IN (SELECT students.student_id FROM students LEFT JOIN student_tutorials ON students.id = student_tutorials.studentId LEFT JOIN tutorials ON student_tutorials.tutorialId = tutorials.id LEFT JOIN cycles ON tutorials.cycleId = cycles.id WHERE cycles.status = 'Active') GROUP BY students.student_id", { type: db.connection.QueryTypes.SELECT})
-		// .then((ms) => {
-		// 		console.log(JSON.parse(JSON.stringify(ms)));
-		//  });
-
-
 		db.connection.query("SELECT * FROM students WHERE students.id NOT IN ( SELECT student_tutorials.studentId FROM student_tutorials )", { type: db.connection.QueryTypes.SELECT})
 		  	.then((ms) => {
 		  	var notSignedUp = ms.map((s) => {
@@ -162,7 +156,7 @@ module.exports = (localApp, db) => {
 		})
 	});
 
-<<<<<<< HEAD
+
 	//deletes a student, but dont know which one
 	localApp.delete('/api/students/:id', (req, res) => {
 		db.student.destroy({
@@ -178,8 +172,6 @@ module.exports = (localApp, db) => {
 	});
 
 
-=======
->>>>>>> 249b2b2aa90c27629d3384905ea3d9cf4beeff47
 	//login for users
 	localApp.post('/api/students/login.json', (req, res) => {
 		const first_name = req.body.student.first_name;

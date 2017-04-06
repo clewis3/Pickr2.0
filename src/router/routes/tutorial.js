@@ -4,6 +4,7 @@ module.exports = (localApp, db) => {
     // Add students to tutorials
 	localApp.post('/api/tutorials/:tutorial_id/students/:id', (req, res) =>{
         const tutorial_id = req.params.tutorial_id;
+        // Inconsistency in naming student_id, student_id = students primary key id 
         const student_id = req.params.id.slice(0,-5);
         const isLock = req.body; // if isLock.lock == true, locked: 1
 

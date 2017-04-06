@@ -36,6 +36,7 @@
 					var register = function() {
 						var reg = new StudentTutorialResource();
 						reg.lock = true;
+						// Inconsistency in naming student_id, student_id = students primary key id 
 						reg.$register({tutorial_id: $routeParams.tutorial_id,student_id: data[i].id}, function() {
 							i++;
 							if (i == data.length) {
