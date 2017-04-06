@@ -82,8 +82,8 @@ module.exports = (localApp, db) => {
 					first_name: student.first_name,
 					last_name: student.last_name,
 					grade_level: student.grade_level,
-					id: student.student_id
-					//student_id: student.student_id
+					id: student.id
+					student_id: student.student_id
 				}
 			});
 
@@ -167,7 +167,7 @@ module.exports = (localApp, db) => {
 	localApp.delete('/api/students/:id', (req, res) => {
 		db.student.destroy({
 			where: {
-				student_id: req.params.id.slice(0,-5)
+				id: req.params.id.slice(0,-5)
 			}
 		}).then((rowDeleted) => {
 			//it might be more than one, if it deletes all the associated tutorials it is in
