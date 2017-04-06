@@ -6,7 +6,6 @@ module.exports = (localApp, db) => {
 	//We should refactor the count for each tutorial
 	localApp.get('/api/cycles/:id/tutorials.json', (req, res) => {
 		const cycle_id = req.params.id;
-
 		if (cycle_id == 0) {
 			db.tutorial.findAll({
 				include: [
@@ -28,7 +27,7 @@ module.exports = (localApp, db) => {
 						room_number: tutorial.room_number,
 						teacher_name: tutorial.teacher_name,
 						max_students: tutorial.max_students,
-						students: tutorial.students,
+						students: tutorial.students.length,
 						cycle: [tutorial.cycle].map((cycle) => {
 							return {
 								id: cycle.id,
