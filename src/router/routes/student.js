@@ -82,8 +82,8 @@ module.exports = (localApp, db) => {
 					first_name: student.first_name,
 					last_name: student.last_name,
 					grade_level: student.grade_level,
-					id: student.student_id
-					//student_id: student.student_id
+					id: student.id,
+					student_id: student.student_id
 				}
 			});
 
@@ -92,12 +92,6 @@ module.exports = (localApp, db) => {
 	});
 
 	localApp.get('/api/students/activeU.json', (req, res) => { 
-
-		// db.connection.query("SELECT * FROM students LEFT JOIN student_tutorials ON students.id = student_tutorials.studentId LEFT JOIN tutorials ON student_tutorials.tutorialId = tutorials.id LEFT JOIN cycles ON tutorials.cycleId = cycles.id WHERE cycles.status != 'Active' AND  students.student_id NOT IN (SELECT students.student_id FROM students LEFT JOIN student_tutorials ON students.id = student_tutorials.studentId LEFT JOIN tutorials ON student_tutorials.tutorialId = tutorials.id LEFT JOIN cycles ON tutorials.cycleId = cycles.id WHERE cycles.status = 'Active') GROUP BY students.student_id", { type: db.connection.QueryTypes.SELECT})
-		// .then((ms) => {
-		// 		console.log(JSON.parse(JSON.stringify(ms)));
-		//  });
-
 
 		db.connection.query("SELECT * FROM students WHERE students.id NOT IN ( SELECT student_tutorials.studentId FROM student_tutorials )", { type: db.connection.QueryTypes.SELECT})
 		  	.then((ms) => {
@@ -159,6 +153,20 @@ module.exports = (localApp, db) => {
 		}).then(() =>{
 			res.json({'data': 'deleted all'});
 		})
+	});
+
+	//deletes a student, but dont know which one
+	localApp.delete('/api/students/:id', (req, res) => {
+		db.student.destroy({
+			where: {
+				id: req.params.id.slice(0,-5)
+			}
+		}).then((rowDeleted) => {
+			//it might be more than one, if it deletes all the associated tutorials it is in
+			if(rowDeleted >= 1) {
+				res.json({numOfRowsDeleted: rowDeleted}); //might want to change response
+			}
+		});
 	});
 
 	//login for users
