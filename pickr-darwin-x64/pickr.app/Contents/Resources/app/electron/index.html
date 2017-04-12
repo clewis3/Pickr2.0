@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>Pickr</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <script>window.$ = window.jQuery = require('jquery');</script>
+  </head>
+  <body>
+    <h1>Pickr</h1>
+
+    <p>Here is where we hopefully want to have a link to the local host.</p><br>
+    <h3>URL:</h3><p><span id="ip"></span></span>:3000</p><br>
+    <h3>Admin</h3>
+    <p>username: admin</p>
+    <p>password: <span id="admin"></span></p><br>
+
+    <h3>Teacher</h3>
+    <p>username: teacher</p>
+    <p>password: <span id="teacher"></span></p><br>
+
+    <script>
+	    // You can also require other files to run in this process
+	    require('./../electron/renderer.js')
+  	</script>
+
+  </body>
+</html>

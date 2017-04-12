@@ -1,0 +1,30 @@
+<md-dialog aria-label="{{title()}}">
+	
+	<md-toolbar>
+			<div class="md-toolbar-tools">
+				<h2>{{title()}}</h2>
+				<span flex></span>
+				<md-button class="md-icon-button" ng-click="cancel()">
+					<md-icon md-svg-icon="close" aria-label="Close Dialog"></md-icon>
+				</md-button>
+			</div>
+		</md-toolbar>
+	<md-dialog-content>
+		<table>
+			<thead>
+				<tr>
+					<th>Student Name</th>
+					<th>Grade Level</th>
+					<th>Student ID</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr ng-repeat="student in students | orderBy:sort:reverse">
+					<td>{{ student.last_name +',  ' +student.first_name}}</td>
+					<td>{{student.grade_level}}</td>
+					<td>{{student.id}}</td>
+				</tr>
+			</tbody>
+		</table>
+	</md-dialog-content>
+</md-dialog>

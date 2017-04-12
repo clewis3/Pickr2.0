@@ -1,0 +1,18 @@
+<div layout="column">
+	<form name="uploadForm">
+		<h3>Upload student list:</h3>
+		<md-input-container>
+			<button class="md-button md-primary md-raised">
+				Choose File
+				<input type="file" name="files" file-upload="upload" ng-model="file" aria-label="Choose File" />
+			</button>
+			<div ng-messages="uploadForm.files.$error">
+				<div ng-message="fileType">File type must be .csv</div>
+				<div ng-message="serverError">{{serverError}}</div>
+			</div>
+			<p ng-show="importing"><strong>Importing...</strong></p>
+			<md-progress-linear ng-show="importing" md-mode="indeterminate"></md-progress-linear>
+		</md-input-container>
+	</form>
+	<p>Please upload a .csv file with comma delimited values of "last_name", "first_name", "grade_level", and "student_number".</p>
+</div>
