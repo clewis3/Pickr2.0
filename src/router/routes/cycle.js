@@ -13,7 +13,8 @@ module.exports = (localApp, db) => {
 				{
 					model: db.cycle,
 					//where: db.Sequelize.or({status: 'Active'},{status: 'Open'})
-					where: {status: 'Open'}	
+					where: {status: 'Open',
+							approved: true}	
 				},
 				{
 					model:db.student
@@ -28,7 +29,7 @@ module.exports = (localApp, db) => {
 						room_number: tutorial.room_number,
 						teacher_name: tutorial.teacher_name,
 						max_students: tutorial.max_students,
-						students: tutorial.students,
+						students: tutorial.students.length,
 						cycle: [tutorial.cycle].map((cycle) => {
 							return {
 								id: cycle.id,
