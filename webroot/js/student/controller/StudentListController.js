@@ -7,6 +7,15 @@
 
 			$scope.students = StudentResource.query();
 
+			let set = function() {
+				let t = new Set();
+				for (var i=0; i<$scope.students.length; i++) {
+					t.add(parseInt($scope.students[i].grade_level),10);
+				}
+
+				return Array.from(t).sort(function(a, b){return a-b});
+			}
+
 			$scope.deleting = false;
 
 			$scope.delete = function(index, ev) {
@@ -29,9 +38,9 @@
 				});
 			};
 
-			$scope.delete8 = function(ev) {
+			$scope.deleteGrade = function(ev) {
 				$scope.deleting = true;
-				var delete8 = function(i) {
+				var deleteGrades = function(i, grade) {
 					if (i < 0) {
 						$scope.deleting = false;
 						if (!$scope.$$phase) {
@@ -39,28 +48,28 @@
 						}
 						return;
 					}
-					if ($scope.students[i].grade_level == 8) {
+					console.log($scope.students[i].grade_level , grade);
+					if ($scope.students[i].grade_level == grade) {
 						$scope.students[i].$delete(function() {
 							$scope.students.splice(i, 1);
-							delete8(i-1);
+							deleteGrades(i-1,grade);
 						});
 					} else {
-						delete8(i-1);
+						deleteGrades(i-1, grade);
 					}
 				};
-				var i = $scope.students.length-1;
-				var confirm = $mdDialog.confirm()
-					.parent(angular.element(document.body))
-					.title("Are you sure")
-					.content("Delete all 8th graders?")
-					.ariaLabel("Confirmation")
-					.ok("Delete")
-					.cancel("Cancel")
-					.targetEvent(ev);
-				$mdDialog.show(confirm).then(function() {
+
+				$mdDialog.show({
+					controller: 'GradeDeleteController',
+					templateUrl: '/js/student/view/delete-dialog.html',
+					parent: angular.element(document.body),
+					targetEvent: ev,
+					locals: {
+						grades: set()
+					}
+				}).then(function(data) {
 					var i = $scope.students.length-1;
-					delete8(i);
-				}, function() {
+					deleteGrades(i, data);
 					$scope.deleting = false;
 				});
 			};
