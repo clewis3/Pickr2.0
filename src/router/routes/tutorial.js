@@ -4,13 +4,13 @@ module.exports = (localApp, db) => {
     // Add students to tutorials
 	localApp.post('/api/tutorials/:tutorial_id/students/:id', (req, res) =>{
         const tutorial_id = req.params.tutorial_id;
-        // Inconsistency in naming student_id, student_id = students primary key id 
+        // Inconsistency in naming student_id, student_id = students primary key id
         const student_id = req.params.id.slice(0,-5);
         const isLock = req.body; // if isLock.lock == true, locked: 1
 
         // Determine if locked (if admin or student added to tutorial)
         if (isLock.lock == true) {
-            console.log(isLock.lock); 
+            console.log(isLock.lock);
             // Admin
             currLocked = Number(1);
         }
@@ -21,14 +21,14 @@ module.exports = (localApp, db) => {
 
         // Find all tutorials in origin cycle to delete if necessary
         db.tutorial.findOne({
-            where: {    
+            where: {
                 id: tutorial_id,
             }
         }).then((tutorial) => {
             currCycle = tutorial.cycleId;
             console.log("currCycle= ", currCycle);
             // Find all tutorials in origin cycle to delete if necessary
-            // Find all tutorials within same cycle as tutorial_id 
+            // Find all tutorials within same cycle as tutorial_id
             db.tutorial.findAll({
                 include: [
                     {
@@ -46,12 +46,12 @@ module.exports = (localApp, db) => {
                             }
                         }).then((deleteStudentTutorial) => {
                             if (deleteStudentTutorial != null) {
-                                //delete student_tutorial if returns an object   
-                                if (!(deleteStudentTutorial.locked!=1 && currLocked)) { 
+                                //delete student_tutorial if returns an object
+                                if (!(deleteStudentTutorial.locked!=1 && currLocked)) {
                                     db.student_tutorial.destroy({
                                         where: {
                                             tutorialId: deleteStudentTutorial.tutorialId,
-                                            studentId: student_id 
+                                            studentId: student_id
                                         }
                                     }).then(() =>{
                                         console.log({'data': 'deleted student from tutorial'});
@@ -71,7 +71,7 @@ module.exports = (localApp, db) => {
                                     res.json(newStudentTutorial);
                                 }).catch(function(err) {
                                     console.log(err, currLocked);
-                                }); 
+                                });
                             }
                             else {
                                 res.json({data: "You are locked into another tutorial."})
@@ -82,7 +82,7 @@ module.exports = (localApp, db) => {
             });
 	});
 
-    // Delete students from tutorial 
+    // Delete students from tutorial
     localApp.delete('/api/tutorials/:tutorial_id/students/:id', (req, res) =>{
         const tutorial_id = req.params.tutorial_id;
         const student_id = req.params.id.slice(0,-5);
@@ -90,14 +90,14 @@ module.exports = (localApp, db) => {
         db.student_tutorial.destroy({
             where: {
                 tutorialId: tutorial_id,
-                studentId: student_id 
+                studentId: student_id
             }
         }).then(() =>{
             res.json({'data': 'deleted student from tutorial'});
         }).catch(function(errors) {
             console.log(errors);
         });
-    }); 
+    });
 
     // Student view: adding student to tutorial
     localApp.post('/api/tutorials/:tutorial_id/students.json', (req, res) =>{
@@ -109,7 +109,7 @@ module.exports = (localApp, db) => {
         // console.log(req.params);
         const tutorialId = req.params.tutorial_id;
 
-        // Find all studentId for selected tutorial 
+        // Find all studentId for selected tutorial
         db.student.findAll({
             include: [
             {
@@ -137,9 +137,9 @@ module.exports = (localApp, db) => {
         });
     });
 
-    // TODO: Locked tutorial 
+    // TODO: Locked tutorial
 
-    // TODO: Locked student 
+    // TODO: Locked student
 
     // Tutorial details - tutorialDetailController.js and tutorial/view/detail.html
     localApp.get('/api/cycles/:cycle_id/tutorials/:tutorial_id.json', (req, res) => {
@@ -206,9 +206,9 @@ module.exports = (localApp, db) => {
         });
     });
 
-    //deletes a tutorial CHECK THE ROUTE 
+    //deletes a tutorial CHECK THE ROUTE
     localApp.delete('/api/cycles/tutorials.json', (req, res) => {
-        
+
     });
 
 }
