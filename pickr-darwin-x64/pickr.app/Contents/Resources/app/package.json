@@ -23,7 +23,10 @@
     "electron": "^1.6.1",
     "electron-packager": "^8.5.2",
     "electron-prebuilt": "^1.4.13",
-    "electron-rebuild": "^1.5.7"
+    "electron-rebuild": "^1.5.7",
+    "jasmine-core": "^2.5.2",
+    "karma-chrome-launcher": "^2.0.0",
+    "karma-jasmine": "^1.1.0"
   },
   "dependencies": {
     "angular-material": "^1.1.3",
