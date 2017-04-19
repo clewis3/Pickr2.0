@@ -3,7 +3,8 @@ module.exports = (connection, Sequelize) =>  {
         name: Sequelize.STRING,
         room_number: Sequelize.STRING,
         teacher_name: Sequelize.STRING,
-        max_students: Sequelize.INTEGER
+        max_students: Sequelize.INTEGER,
+        approved: {type: Sequelize.BOOLEAN, allowNull: false, defaultValue: false }
     });
     return Tutorial;
 };

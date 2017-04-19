@@ -175,8 +175,8 @@ module.exports = (localApp, db) => {
 		const last_name = req.body.student.last_name;
 		const password = req.body.password;
 		//add something for multi threading here
-		loginCheck(first_name, last_name, password, req, res);
-		// devLoginCheck(first_name,last_name,req,res);
+		//loginCheck(first_name, last_name, password, req, res);
+		devLoginCheck(first_name,last_name,req,res);
 	});
 
 	//importing list

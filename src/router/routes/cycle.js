@@ -12,7 +12,8 @@ module.exports = (localApp, db) => {
 				{
 					model: db.cycle,
 					//where: db.Sequelize.or({status: 'Active'},{status: 'Open'})
-					where: {status: 'Open'}	
+					where: {status: 'Open',
+							approved: true}	
 				},
 				{
 					model:db.student

@@ -1,0 +1,23 @@
+<md-dialog aria-label="{{title()}}">
+	<form ng-submit="submit()" name="create" novalidate>
+		<md-toolbar>
+			<div class="md-toolbar-tools">
+				<h2>{{title()}}</h2>
+				<span flex></span>
+				<md-button class="md-icon-button" ng-click="cancel()">
+					<md-icon md-svg-icon="close" aria-label="Close Dialog"></md-icon>
+				</md-button>
+			</div>
+		</md-toolbar>
+		<md-dialog-content>
+			<md-select placeholder="Grade" ng-model="s.grade">
+				<md-option value="{{grade}}" ng-repeat="grade in grades">{{grade}}</md-option>
+			</md-select>
+		</md-dialog-content>
+		<div class="md-actions" layout="row">
+			<md-button ng-click="delete()" class="md-raised md-warn">Delete</md-button>
+			<md-button ng-click="cancel()" class="md-raised">Cancel</md-button>
+		</div>
+		<p>{{grades.size}}</p>
+	</form>
+</md-dialog>

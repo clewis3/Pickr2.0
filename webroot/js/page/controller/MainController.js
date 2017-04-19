@@ -10,6 +10,10 @@
 				return StudentFactory.type() === "admin";
 			};
 
+			$scope.adminTeacher = function() {
+				return StudentFactory.type() === "admin" || StudentFactory.type() === "teacher";
+			};
+
 			$scope.toggleSidenav = function(which) {
 				$mdSidenav(which).toggle();
 			};

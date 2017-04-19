@@ -99,10 +99,8 @@ localApp.use(bodyParser.json());
 localApp.use(bodyParser.urlencoded({ extended: true })); 
 
 
-
 localApp.use(morgan('tiny')); //prints useful info the terminal
 router(localApp,db);
-
 
 localApp.get('*', (req, res) =>{
   res.sendfile('webroot/index.html');

@@ -2,7 +2,7 @@
 	'use strict';
 
 	angular.module('Cycle')
-		.controller('CycleListController', ['$scope', '$location', '$mdDialog', 'Page', 'CycleResource', function($scope, $location, $mdDialog, Page, CycleResource) {
+		.controller('CycleListController', ['$scope', '$http','$location', '$mdDialog', 'Page', 'CycleResource', function($scope, $http,$location, $mdDialog, Page, CycleResource) {
 			Page.title('Cycles');
 			$scope.cycles = CycleResource.query();
 
