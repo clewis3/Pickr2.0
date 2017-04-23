@@ -20,7 +20,7 @@ function createWindow () {
   }));
 
   // Open the DevTools.
-  mainWindow.webContents.openDevTools()
+  //mainWindow.webContents.openDevTools()
 
   // Emitted when the window is closed.
   mainWindow.on('closed', function () {
@@ -130,7 +130,6 @@ var createUsers = () => {
     }
   });
 }
-
 
 //starts the main server, and checks the database is set up.
 db.connection.sync().then(() => {
