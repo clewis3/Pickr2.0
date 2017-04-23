@@ -7,8 +7,8 @@
 
 			$scope.students = StudentResource.query();
 
-			let set = function() {
-				let t = new Set();
+			var set = function() {
+				var t = new Set();
 				for (var i=0; i<$scope.students.length; i++) {
 					t.add(parseInt($scope.students[i].grade_level),10);
 				}

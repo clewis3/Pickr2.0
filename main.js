@@ -6,6 +6,10 @@ const BrowserWindow = electron.BrowserWindow;
 
 const path = require('path');
 const url = require('url');
+var os = require('os');
+var ifaces = os.networkInterfaces();
+
+
 
 
 function createWindow () {
@@ -20,7 +24,7 @@ function createWindow () {
   }));
 
   // Open the DevTools.
-  mainWindow.webContents.openDevTools()
+  //mainWindow.webContents.openDevTools()
 
   // Emitted when the window is closed.
   mainWindow.on('closed', function () {
@@ -51,6 +55,28 @@ electron.ipcMain.on('passwords', (event,arg) => {
           return {}
         }
       });
+
+    Object.keys(ifaces).forEach(function (ifname) {
+      var alias = 0;
+
+      ifaces[ifname].forEach(function (iface) {
+        if ('IPv4' !== iface.family || iface.internal !== false) {
+          // skip over internal (i.e. 127.0.0.1) and non-ipv4 addresses
+          return;
+        }
+
+        if (alias >= 1) {
+          // this single interface has multiple ipv4 addresses
+          //console.log(ifname + ':' + alias, iface.address);
+        } else {
+          // this interface has only one ipv4 adress
+          if (ifname == 'en0') {
+            responseJSON.push({'en0': iface.address});
+          }
+        }
+        ++alias;
+      });
+    });
 
     event.sender.send('passwords', responseJSON);
   });
@@ -130,7 +156,6 @@ var createUsers = () => {
     }
   });
 }
-
 
 //starts the main server, and checks the database is set up.
 db.connection.sync().then(() => {
