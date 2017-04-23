@@ -157,7 +157,6 @@ var createUsers = () => {
   });
 }
 
-
 //starts the main server, and checks the database is set up.
 db.connection.sync().then(() => {
   createUsers()

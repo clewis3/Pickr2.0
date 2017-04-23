@@ -6,7 +6,6 @@ module.exports = (localApp, db) => {
 	//We should refactor the count for each tutorial
 	localApp.get('/api/cycles/:id/tutorials.json', (req, res) => {
 		const cycle_id = req.params.id;
-
 		if (cycle_id == 0) {
 			db.tutorial.findAll({
 				include: [
